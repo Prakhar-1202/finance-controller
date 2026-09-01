@@ -1,0 +1,221 @@
+order_id,invoice_id,case_type,expected_match,expected_category,notes
+order_4izasnwywr,INV-2026-00138,clean,True,clean,clean
+order_c4xl9967i6,INV-2026-00141,partial_refund,True,partial_refund,partial_refund: refund of ~14022.6 reduces net vs invoice_amount
+order_k20in8910t,INV-2026-00179,clean,True,clean,clean
+order_lrmjkv5usg,INV-2026-00039,clean,True,clean,clean
+order_2knftu2gc5,INV-2026-00057,clean,True,clean,clean
+order_j9a3y36ddf,INV-2026-00139,clean,True,clean,clean
+order_2mtr6snglh,INV-2026-00188,delayed_settlement,False,delayed_settlement,delayed_settlement: settlement lands well outside a tight date window
+order_p0lvsnujza,INV-2026-00024,clean,True,clean,clean
+order_pnsm43d8w3,INV-2026-00037,clean,True,clean,clean
+order_bhb7s9tj1g,INV-2026-00095,clean,True,clean,clean
+order_abn7g8b2zx,INV-2026-00177,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_93mzywr7mk,INV-2026-00213,clean,True,clean,clean
+order_7eeqtul1p3,INV-2026-00029,clean,True,clean,clean
+order_bpt11f9i6u,INV-2026-00130,clean,True,clean,clean
+order_w4a7fq9p96,INV-2026-00166,clean,True,clean,clean
+order_9e3nwxuj3a,INV-2026-00185,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_unj48vfcx7,INV-2026-00084,clean,True,clean,clean
+order_os0fb4ypei,INV-2026-00098,clean,True,clean,clean
+order_ym52xg8p6b,INV-2026-00103,clean,True,clean,clean
+order_qt3wvedn9u,INV-2026-00110,clean,True,clean,clean
+order_9wrsb4gf16,INV-2026-00176,clean,True,clean,clean
+order_se45bg34iq,INV-2026-00207,clean,True,clean,clean
+order_m8t2sa5bnn,INV-2026-00093,clean,True,clean,clean
+order_pjrht7zewv,INV-2026-00117,clean,True,clean,clean
+order_dvlnknd669,INV-2026-00146,clean,True,clean,clean
+order_jn6fokzixz,INV-2026-00167,clean,True,clean,clean
+order_3lbqgu3oby,,orphan_settlement,False,orphan_settlement,orphan_settlement: no matching internal ledger invoice exists
+order_oljq52wspo,INV-2026-00203,clean,True,clean,clean
+order_7u6n7hv3iz,INV-2026-00036,clean,True,clean,clean
+order_xi5bj5d5e3,INV-2026-00161,partial_refund,True,partial_refund,partial_refund: refund of ~9371.02 reduces net vs invoice_amount
+order_1ocjxzefli,INV-2026-00163,clean,True,clean,clean
+order_dktmonrvbj,INV-2026-00204,clean,True,clean,clean
+order_984uvkyrmj,INV-2026-00211,clean,True,clean,clean
+order_00u686xii5,INV-2026-00214,clean,True,clean,clean
+order_yyv37dia5u,INV-2026-00063,clean,True,clean,clean
+order_4w3zkwdeek,INV-2026-00157,clean,True,clean,clean
+order_y6dpbhsahx,INV-2026-00001,partial_refund,True,partial_refund,partial_refund: refund of ~965.63 reduces net vs invoice_amount
+order_fgyw6zbnz8,INV-2026-00087,clean,True,clean,clean
+order_brn7zsedfq,INV-2026-00089,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_mgtt0iaaky,INV-2026-00128,clean,True,clean,clean
+order_4ptgq9cvah,INV-2026-00172,clean,True,clean,clean
+order_jl2z0ljch2,INV-2026-00182,clean,True,clean,clean
+order_hc0clbr7tc,INV-2026-00015,clean,True,clean,clean
+order_yzcotohp6v,INV-2026-00031,clean,True,clean,clean
+order_x4w7kyhqin,INV-2026-00065,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_gf1c8wquuy,INV-2026-00080,clean,True,clean,clean
+order_448n7odkef,INV-2026-00192,partial_refund,True,partial_refund,partial_refund: refund of ~21096.12 reduces net vs invoice_amount
+order_mf8mdd4v30,INV-2026-00002,partial_refund,True,partial_refund,partial_refund: refund of ~837.47 reduces net vs invoice_amount
+order_r56fao72kz,INV-2026-00014,clean,True,clean,clean
+order_tk93tyt7d5,INV-2026-00018,clean,True,clean,clean
+order_tpac56t4uf,INV-2026-00020,partial_refund,True,partial_refund,partial_refund: refund of ~1627.79 reduces net vs invoice_amount
+order_kxwd8il3fb,INV-2026-00027,clean,True,clean,clean
+order_rjiw1swjck,INV-2026-00030,partial_refund,True,partial_refund,partial_refund: refund of ~4249.56 reduces net vs invoice_amount
+order_aoi4e8xf7k,INV-2026-00051,clean,True,clean,clean
+order_b9yo18pajs,INV-2026-00152,clean,True,clean,clean
+order_t6dvwrb7f6,INV-2026-00197,partial_refund,True,partial_refund,partial_refund: refund of ~2069.19 reduces net vs invoice_amount
+order_z2nx1wvbd4,INV-2026-00220,clean,True,clean,clean
+order_m1g9fk2st0,,orphan_settlement,False,orphan_settlement,orphan_settlement: no matching internal ledger invoice exists
+order_lcxlvpymb5,INV-2026-00097,clean,True,clean,clean
+order_875aud9k9t,,orphan_settlement,False,orphan_settlement,orphan_settlement: no matching internal ledger invoice exists
+order_l0mvzmuf84,INV-2026-00190,clean,True,clean,clean
+order_jqijc1ydmt,INV-2026-00200,clean,True,clean,clean
+order_qpki7p5tb9,INV-2026-00013,clean,True,clean,clean
+order_4dnmkza3oa,INV-2026-00059,delayed_settlement,False,delayed_settlement,delayed_settlement: settlement lands well outside a tight date window
+order_a0i5ldslcb,INV-2026-00218,clean,True,clean,clean
+order_3i12vj99t2,INV-2026-00067,clean,True,clean,clean
+order_epkyrybova,INV-2026-00076,partial_refund,True,partial_refund,partial_refund: refund of ~3778.58 reduces net vs invoice_amount
+order_2oc6uzhr5x,INV-2026-00005,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_gl58kxo9t7,INV-2026-00023,clean,True,clean,clean
+order_jja26yfpmv,INV-2026-00058,clean,True,clean,clean
+order_ozd1at7o75,INV-2026-00118,clean,True,clean,clean
+order_wyam1n0lh9,INV-2026-00180,clean,True,clean,clean
+order_3gdppq0y9d,INV-2026-00012,partial_refund,True,partial_refund,partial_refund: refund of ~12741.36 reduces net vs invoice_amount
+order_afeyuhz1gv,INV-2026-00035,clean,True,clean,clean
+order_fgv0ec14m2,INV-2026-00052,clean,True,clean,clean
+order_ajepecqnvq,INV-2026-00068,clean,True,clean,clean
+order_elos6zle6k,INV-2026-00123,clean,True,clean,clean
+order_pvn9er14ff,INV-2026-00006,partial_refund,True,partial_refund,partial_refund: refund of ~27699.43 reduces net vs invoice_amount
+order_zhwy9hecgz,INV-2026-00100,partial_refund,True,partial_refund,partial_refund: refund of ~315.53 reduces net vs invoice_amount
+order_hmy4sj6bw3,INV-2026-00019,clean,True,clean,clean
+order_71q3vli7kq,INV-2026-00038,clean,True,clean,clean
+order_izl08yg0jv,INV-2026-00041,clean,True,clean,clean
+order_1gspk9p38q,INV-2026-00048,clean,True,clean,clean
+order_n606n9rr7s,INV-2026-00096,clean,True,clean,clean
+order_efqjg02u1g,INV-2026-00121,clean,True,clean,clean
+order_rcpprcjiwv,INV-2026-00147,clean,True,clean,clean
+order_3cd5glqj5s,INV-2026-00156,partial_refund,True,partial_refund,partial_refund: refund of ~560.91 reduces net vs invoice_amount
+order_nc21o0z5qr,INV-2026-00164,clean,True,clean,clean
+order_ueybisbo55,INV-2026-00178,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_w5uzbikcid,INV-2026-00003,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_gatj9tze5r,INV-2026-00042,clean,True,clean,clean
+order_me8f840982,INV-2026-00062,partial_refund,True,partial_refund,partial_refund: refund of ~2291.21 reduces net vs invoice_amount
+order_a0gnzs43c5,INV-2026-00077,clean,True,clean,clean
+order_6dut076g5g,INV-2026-00119,clean,True,clean,clean
+order_w82lk2n7h9,INV-2026-00149,partial_refund,True,partial_refund,partial_refund: refund of ~3448.54 reduces net vs invoice_amount
+order_q01tee13n3,INV-2026-00160,clean,True,clean,clean
+order_ebwuwqheyt,INV-2026-00215,clean,True,clean,clean
+order_7srcbpljd8,INV-2026-00047,partial_refund,True,partial_refund,partial_refund: refund of ~10556.56 reduces net vs invoice_amount
+order_bne6loh25n,INV-2026-00061,partial_refund,True,partial_refund,partial_refund: refund of ~225.44 reduces net vs invoice_amount
+order_9sojuv0gyu,INV-2026-00131,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_p3jpxgh301,INV-2026-00206,delayed_settlement,False,delayed_settlement,delayed_settlement: settlement lands well outside a tight date window
+order_sic43olfar,INV-2026-00212,clean,True,clean,clean
+order_5k8p4q0b8i,INV-2026-00034,clean,True,clean,clean
+order_z3nx39rbsv,INV-2026-00054,partial_refund,True,partial_refund,partial_refund: refund of ~885.82 reduces net vs invoice_amount
+order_zgf9q5rdoq,,orphan_settlement,False,orphan_settlement,orphan_settlement: no matching internal ledger invoice exists
+order_ygfliji18k,INV-2026-00122,clean,True,clean,clean
+order_j9rm7pyxdw,INV-2026-00144,clean,True,clean,clean
+order_t8hljefy3z,INV-2026-00183,clean,True,clean,clean
+order_8y72ivglye,INV-2026-00193,clean,True,clean,clean
+order_oy0ifznbqh,INV-2026-00022,partial_refund,True,partial_refund,partial_refund: refund of ~6023.4 reduces net vs invoice_amount
+order_b7r3ocwbfu,INV-2026-00043,clean,True,clean,clean
+order_rxo1bdje15,INV-2026-00049,clean,True,clean,clean
+order_o0llj8yrdd,INV-2026-00071,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_y5y2jr8kk7,INV-2026-00115,clean,True,clean,clean
+order_n5pp3xvkvz,INV-2026-00148,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_u6qlz2rwgw,INV-2026-00216,clean,True,clean,clean
+order_ye9r1f63ai,INV-2026-00219,clean,True,clean,clean
+order_j7xvg0fn9x,INV-2026-00004,clean,True,clean,clean
+order_id25owf759,INV-2026-00021,clean,True,clean,clean
+order_j883dhx8bm,INV-2026-00066,clean,True,clean,clean
+order_enulqjidkn,INV-2026-00107,delayed_settlement,False,delayed_settlement,delayed_settlement: settlement lands well outside a tight date window
+order_dr5xyfc4kl,INV-2026-00196,clean,True,clean,clean
+order_3lc58drc11,INV-2026-00009,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_n2twdl9zs1,INV-2026-00102,clean,True,clean,clean
+order_1vsmado8e7,INV-2026-00153,clean,True,clean,clean
+order_6wktakpuxq,INV-2026-00026,clean,True,clean,clean
+order_hx74d0gjyv,INV-2026-00133,clean,True,clean,clean
+order_w0ldalmjeg,INV-2026-00145,partial_refund,True,partial_refund,partial_refund: refund of ~834.88 reduces net vs invoice_amount
+order_42hhihxs58,INV-2026-00209,clean,True,clean,clean
+order_479t6vxdp5,INV-2026-00033,partial_refund,True,partial_refund,partial_refund: refund of ~28945.46 reduces net vs invoice_amount
+order_8qizk3c9xb,INV-2026-00140,clean,True,clean,clean
+order_li076a3kkr,INV-2026-00205,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_uznofy6452,INV-2026-00028,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_swrpbjek5r,INV-2026-00050,clean,True,clean,clean
+order_wc4rtwuzka,INV-2026-00092,clean,True,clean,clean
+order_z0jkibu4fm,INV-2026-00198,partial_refund,True,partial_refund,partial_refund: refund of ~201.3 reduces net vs invoice_amount
+order_7oonncildz,INV-2026-00090,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_bwikotckeh,INV-2026-00187,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_983ep9p9w4,INV-2026-00202,clean,True,clean,clean
+order_84azytjxep,INV-2026-00007,clean,True,clean,clean
+order_f58c2jwocl,INV-2026-00055,clean,True,clean,clean
+order_nz1udbfwyj,INV-2026-00075,clean,True,clean,clean
+order_votqtxhi15,INV-2026-00124,partial_refund,True,partial_refund,partial_refund: refund of ~858.8 reduces net vs invoice_amount
+order_j70e3p15ah,INV-2026-00129,clean,True,clean,clean
+order_h23c42yfkj,,orphan_settlement,False,orphan_settlement,orphan_settlement: no matching internal ledger invoice exists
+order_z42o83rlkt,INV-2026-00165,clean,True,clean,clean
+order_m148p0tvhh,INV-2026-00032,clean,True,clean,clean
+order_o119xp9n56,INV-2026-00127,clean,True,clean,clean
+order_agkc4lorxd,INV-2026-00199,clean,True,clean,clean
+order_61i2hgj11y,INV-2026-00060,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_4ykadejnob,INV-2026-00109,clean,True,clean,clean
+order_38sryo4rcb,INV-2026-00159,clean,True,clean,clean
+order_cvarlw3mg2,INV-2026-00191,clean,True,clean,clean
+order_sdw4shnf87,INV-2026-00008,partial_refund,True,partial_refund,partial_refund: refund of ~9725.62 reduces net vs invoice_amount
+order_bz2sf6f7lo,INV-2026-00111,clean,True,clean,clean
+order_zk3ny9v20y,INV-2026-00112,clean,True,clean,clean
+order_uuylajahcp,INV-2026-00126,clean,True,clean,clean
+order_7yirq8rtm4,INV-2026-00208,clean,True,clean,clean
+order_pht0hl9xps,INV-2026-00010,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_xb94pdzp6l,INV-2026-00069,clean,True,clean,clean
+order_50h2cwtg1m,INV-2026-00079,clean,True,clean,clean
+order_ofn1r4kz36,INV-2026-00132,clean,True,clean,clean
+order_rpzlk3e4xy,INV-2026-00154,clean,True,clean,clean
+order_az39pecn0d,INV-2026-00168,clean,True,clean,clean
+order_gox22iniwc,INV-2026-00171,clean,True,clean,clean
+order_vifiit2018,INV-2026-00189,clean,True,clean,clean
+order_t5r5rc6zs6,INV-2026-00201,clean,True,clean,clean
+order_826gyup12s,INV-2026-00088,clean,True,clean,clean
+order_8r2ykccprh,INV-2026-00106,clean,True,clean,clean
+order_hcwi64ciyh,INV-2026-00011,clean,True,clean,clean
+order_nvksp2ex5t,INV-2026-00070,partial_refund,True,partial_refund,partial_refund: refund of ~18380.54 reduces net vs invoice_amount
+order_8uyo57p6bk,INV-2026-00072,clean,True,clean,clean
+order_kqxlm5q201,INV-2026-00135,clean,True,clean,clean
+order_u8iogxpbwh,INV-2026-00155,clean,True,clean,clean
+order_oxko8g8qyn,INV-2026-00078,clean,True,clean,clean
+order_brsz1n3iuz,INV-2026-00113,clean,True,clean,clean
+order_36htf4pyzr,INV-2026-00125,clean,True,clean,clean
+order_0atvzkhiui,INV-2026-00136,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_v78hu7f0i9,INV-2026-00194,clean,True,clean,clean
+order_r1dwwo8nbh,INV-2026-00217,partial_refund,True,partial_refund,partial_refund: refund of ~101.6 reduces net vs invoice_amount
+order_7ptx63cfl0,INV-2026-00046,clean,True,clean,clean
+order_rftmttqlgz,INV-2026-00053,delayed_settlement,False,delayed_settlement,delayed_settlement: settlement lands well outside a tight date window
+order_mp2ixivzk7,INV-2026-00170,partial_refund,True,partial_refund,partial_refund: refund of ~1524.56 reduces net vs invoice_amount
+order_w1n6kvpuc8,INV-2026-00044,clean,True,clean,clean
+order_duxlez896d,INV-2026-00085,partial_refund,True,partial_refund,partial_refund: refund of ~421.1 reduces net vs invoice_amount
+order_qnpcenlk8a,INV-2026-00099,clean,True,clean,clean
+order_os7yt2m6tw,INV-2026-00151,clean,True,clean,clean
+order_ngwyx9trfl,INV-2026-00158,clean,True,clean,clean
+order_iv7zzj64qh,INV-2026-00210,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_nu80b6ugvs,INV-2026-00082,clean,True,clean,clean
+order_ffhhcmktlz,INV-2026-00162,clean,True,clean,clean
+order_pqw2vmcqbn,INV-2026-00081,clean,True,clean,clean
+order_1poxtfdc79,INV-2026-00173,partial_refund,True,partial_refund,partial_refund: refund of ~10453.61 reduces net vs invoice_amount
+order_q0mftg698s,INV-2026-00137,partial_refund,True,partial_refund,partial_refund: refund of ~3612.29 reduces net vs invoice_amount
+order_ftaxp0wfoy,INV-2026-00169,delayed_settlement,False,delayed_settlement,delayed_settlement: settlement lands well outside a tight date window
+order_q77awudtse,INV-2026-00017,clean,True,clean,clean
+order_p87wxe6syl,INV-2026-00025,clean,True,clean,clean
+order_itfoyqbkk4,INV-2026-00045,clean,True,clean,clean
+order_4muekipu1w,INV-2026-00073,clean,True,clean,clean
+order_10lbt3g2qz,INV-2026-00094,clean,True,clean,clean
+order_ct64z7w2se,INV-2026-00101,clean,True,clean,clean
+order_6m7b5c81jh,INV-2026-00105,clean,True,clean,clean
+order_r5l8a78e9r,INV-2026-00134,clean,True,clean,clean
+order_5qjicjdan0,INV-2026-00195,clean,True,clean,clean
+order_o7uubcxulj,INV-2026-00016,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_6ub7l8v1zo,,orphan_settlement,False,orphan_settlement,orphan_settlement: no matching internal ledger invoice exists
+order_l1f90s9bp4,INV-2026-00143,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_lp8ii7ewbx,INV-2026-00174,clean,True,clean,clean
+order_zqakoixntm,INV-2026-00040,clean,True,clean,clean
+order_of8krd5eqy,INV-2026-00064,clean,True,clean,clean
+order_gzlma5uofw,INV-2026-00074,clean,True,clean,clean
+order_1qw6ahf7vp,INV-2026-00091,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_swq40zsu9r,INV-2026-00114,clean,True,clean,clean
+order_rms3jn050e,INV-2026-00175,clean,True,clean,clean
+order_rtwiykid91,INV-2026-00056,orphan_ledger,False,orphan_ledger,"orphan_ledger: payment never received, invoice raised only"
+order_xbz9svn7n1,INV-2026-00083,clean,True,clean,clean
+order_8skch8jwwd,INV-2026-00104,clean,True,clean,clean
+order_ru7zkut6om,INV-2026-00116,clean,True,clean,clean
+order_bi4o6q0usw,INV-2026-00181,clean,True,clean,clean
+order_msyj9boq0i,INV-2026-00184,clean,True,clean,clean

@@ -1,0 +1,215 @@
+invoice_id,order_id,invoice_amount,customer,status,created_at
+INV-2026-00092,order_wc4rtwuzka,2395.67,"Mital, Shankar and Mutti",closed,2026-07-27
+INV-2026-00022,order_oy0ifznbqh,27354.7,"Konda, Gade and Shere",closed,2026-07-22
+INV-2026-00070,order_nvksp2ex5t,84310.16,"Sen, Dey and Sami",closed,2026-08-05
+INV-2026-00012,order_3gdppq0y9d,23581.31,Parmer LLC,closed,2026-07-16
+INV-2026-00063,order_yyv37dia5u,26322.27,"Solanki, Kibe and Solanki",closed,2026-07-08
+INV-2026-00138,order_4izasnwywr,2565.48,"More, Rege and Narain",closed,2026-07-01
+INV-2026-00182,order_jl2z0ljch2,30916.87,"Sangha, Deshmukh and Shenoy",closed,2026-07-09
+INV-2026-00062,order_me8f840982,8995.6,Zacharia and Sons,closed,2026-07-19
+INV-2026-00181,order_bi4o6q0usw,1433.5,Bala-Chacko,closed,2026-08-15
+INV-2026-00172,order_4ptgq9cvah,3265.47,Salvi Group,closed,2026-07-09
+INV-2026-00166,order_w4a7fq9p96,99888.85,Nayak-Nagarajan,closed,2026-07-04
+INV-2026-00180,order_wyam1n0lh9,2449.13,Walla Inc,closed,2026-07-15
+INV-2026-00105,order_6m7b5c81jh,2030.67,Behl-Chanda,closed,2026-08-12
+INV-2026-00057,order_2knftu2gc5,5211.16,Karpe PLC,closed,2026-07-02
+INV-2026-00041,order_izl08yg0jv,15108.55,"Lall, Tella and Gokhale",closed,2026-07-18
+INV-2026-00051,order_aoi4e8xf7k,100934.8,Gandhi-Lanka,closed,2026-07-11
+INV-2026-00139,order_j9a3y36ddf,1617.21,Merchant-Datta,closed,2026-07-02
+INV-2026-00064,order_of8krd5eqy,7870.08,Gupta-Chandra,closed,2026-08-14
+INV-2026-00148,order_n5pp3xvkvz,5353.39,Keer Ltd,open,2026-07-22
+INV-2026-00005,order_2oc6uzhr5x,1803.76,Kaul PLC,open,2026-07-15
+INV-2026-00152,order_b9yo18pajs,19916.99,Shah Group,closed,2026-07-11
+INV-2026-00117,order_pjrht7zewv,28996.32,Goel Group,closed,2026-07-06
+INV-2026-00175,order_rms3jn050e,2076.74,Saini-Yohannan,closed,2026-08-14
+INV-2026-00121,order_efqjg02u1g,23648.33,Barad-Singhal,closed,2026-07-18
+INV-2026-00205,order_li076a3kkr,688.4,Goda-Vig,open,2026-07-26
+INV-2026-00125,order_36htf4pyzr,521.05,Rastogi LLC,closed,2026-08-06
+INV-2026-00097,order_lcxlvpymb5,32498.07,Pingle LLC,closed,2026-07-12
+INV-2026-00046,order_7ptx63cfl0,50132.69,Choudhury LLC,closed,2026-08-07
+INV-2026-00183,order_t8hljefy3z,6419.03,Bedi LLC,closed,2026-07-21
+INV-2026-00035,order_afeyuhz1gv,485.27,Bhatt-Rajan,closed,2026-07-16
+INV-2026-00042,order_gatj9tze5r,2352.56,"Cherian, Misra and Tripathi",closed,2026-07-19
+INV-2026-00080,order_gf1c8wquuy,2887.2,"Sur, Dubey and Gupta",closed,2026-07-10
+INV-2026-00118,order_ozd1at7o75,75448.94,Gola Ltd,closed,2026-07-15
+INV-2026-00061,order_bne6loh25n,669.3,"Khanna, Mallick and Sunder",closed,2026-07-20
+INV-2026-00094,order_10lbt3g2qz,2317.75,"Chaudhry, Borah and Yogi",closed,2026-08-12
+INV-2026-00106,order_8r2ykccprh,27877.16,"Sampath, Malhotra and Basu",closed,2026-08-04
+INV-2026-00154,order_rpzlk3e4xy,682.52,Kohli-Divan,closed,2026-08-03
+INV-2026-00052,order_fgv0ec14m2,12140.79,"Sampath, Kakar and Zacharia",closed,2026-07-16
+INV-2026-00043,order_b7r3ocwbfu,15629.41,"Issac, Dua and Prakash",closed,2026-07-22
+INV-2026-00213,order_93mzywr7mk,63436.89,Kuruvilla-Oak,closed,2026-07-03
+INV-2026-00126,order_uuylajahcp,2727.0,Boase-Mallick,closed,2026-08-02
+INV-2026-00027,order_kxwd8il3fb,69952.69,"Murty, Kala and Tata",closed,2026-07-11
+INV-2026-00079,order_50h2cwtg1m,5328.99,Mangal-Sampath,closed,2026-08-03
+INV-2026-00165,order_z42o83rlkt,1871.28,Mangal and Sons,closed,2026-07-30
+INV-2026-00099,order_qnpcenlk8a,2041.94,"Mittal, Wadhwa and Anand",closed,2026-08-08
+INV-2026-00176,order_9wrsb4gf16,65785.83,"Kannan, Sura and Kanda",closed,2026-07-05
+INV-2026-00011,order_hcwi64ciyh,57118.13,Chanda Group,closed,2026-08-05
+INV-2026-00146,order_dvlnknd669,1511.88,Gara-Chad,closed,2026-07-06
+INV-2026-00024,order_p0lvsnujza,24348.81,"Nair, Bhalla and Karnik",closed,2026-07-03
+INV-2026-00170,order_mp2ixivzk7,2621.9,Reddy-Narayanan,closed,2026-08-07
+INV-2026-00179,order_k20in8910t,9835.35,"Ravel, Gandhi and Sibal",closed,2026-07-01
+INV-2026-00171,order_gox22iniwc,372.43,"Shukla, Sagar and Bhatia",closed,2026-08-03
+INV-2026-00017,order_q77awudtse,2108.26,Buch-Kaul,closed,2026-08-12
+INV-2026-00216,order_u6qlz2rwgw,1415.39,"Ray, Suresh and Khosla",closed,2026-07-22
+INV-2026-00191,order_cvarlw3mg2,2488.08,Bahri PLC,closed,2026-08-01
+INV-2026-00069,order_xb94pdzp6l,94088.08,Handa and Sons,closed,2026-08-03
+INV-2026-00145,order_w0ldalmjeg,2454.75,Kala-Vaidya,closed,2026-07-25
+INV-2026-00083,order_xbz9svn7n1,12911.51,Sood PLC,closed,2026-08-15
+INV-2026-00084,order_unj48vfcx7,4152.04,"Dugar, Bhandari and Trivedi",closed,2026-07-05
+INV-2026-00003,order_w5uzbikcid,60960.77,"Chaudry, Chahal and Sami",open,2026-07-19
+INV-2026-00091,order_1qw6ahf7vp,6213.08,Randhawa-Deep,open,2026-08-14
+INV-2026-00072,order_8uyo57p6bk,1466.07,Borra Group,closed,2026-08-05
+INV-2026-00031,order_yzcotohp6v,1033.63,"Rastogi, Pathak and Kanda",closed,2026-07-10
+INV-2026-00089,order_brn7zsedfq,43971.28,"Virk, Mutti and Lal",open,2026-07-09
+INV-2026-00055,order_f58c2jwocl,66829.09,Dara-Kota,closed,2026-07-30
+INV-2026-00013,order_qpki7p5tb9,1387.08,"Lalla, Bassi and Sharaf",closed,2026-07-13
+INV-2026-00196,order_dr5xyfc4kl,22460.14,Chokshi-Bal,closed,2026-07-23
+INV-2026-00058,order_jja26yfpmv,1973.22,Amble Inc,closed,2026-07-15
+INV-2026-00095,order_bhb7s9tj1g,20852.95,Toor LLC,closed,2026-07-03
+INV-2026-00111,order_bz2sf6f7lo,6173.88,Pingle PLC,closed,2026-08-02
+INV-2026-00128,order_mgtt0iaaky,87870.29,"Yadav, Narula and Bala",closed,2026-07-09
+INV-2026-00110,order_qt3wvedn9u,15359.97,Dixit PLC,closed,2026-07-05
+INV-2026-00104,order_8skch8jwwd,6366.34,"Lalla, Tiwari and Suresh",closed,2026-08-15
+INV-2026-00168,order_az39pecn0d,302.93,Rajagopal Ltd,closed,2026-08-03
+INV-2026-00093,order_m8t2sa5bnn,42794.82,Andra Group,closed,2026-07-06
+INV-2026-00054,order_z3nx39rbsv,1843.85,"Prakash, Sarma and Varughese",closed,2026-07-21
+INV-2026-00164,order_nc21o0z5qr,38506.31,"Khare, Maharaj and Sarraf",closed,2026-07-18
+INV-2026-00133,order_hx74d0gjyv,1818.44,Gupta-Kumar,closed,2026-07-25
+INV-2026-00188,order_2mtr6snglh,84921.67,Zacharia Inc,closed,2026-07-02
+INV-2026-00029,order_7eeqtul1p3,20690.42,Dewan-Koshy,closed,2026-07-04
+INV-2026-00025,order_p87wxe6syl,93345.85,Mutti Group,closed,2026-08-12
+INV-2026-00159,order_38sryo4rcb,1517.7,Wali-Nadig,closed,2026-08-01
+INV-2026-00135,order_kqxlm5q201,955.0,"Yohannan, Hegde and Patla",closed,2026-08-05
+INV-2026-00143,order_l1f90s9bp4,6573.91,Kade-Sani,open,2026-08-13
+INV-2026-00199,order_agkc4lorxd,87891.92,Mitra Ltd,closed,2026-07-31
+INV-2026-00056,order_rtwiykid91,115643.26,Bhatt LLC,open,2026-08-15
+INV-2026-00214,order_00u686xii5,17467.52,Majumdar-Anne,closed,2026-07-07
+INV-2026-00209,order_42hhihxs58,998.38,Seshadri-Kohli,closed,2026-07-25
+INV-2026-00130,order_bpt11f9i6u,81789.57,"Lanka, Barad and Chopra",closed,2026-07-04
+INV-2026-00113,order_brsz1n3iuz,116871.72,Morar LLC,closed,2026-08-06
+INV-2026-00103,order_ym52xg8p6b,117376.07,"Kade, Oza and Jani",closed,2026-07-05
+INV-2026-00169,order_ftaxp0wfoy,1146.05,Kala Inc,closed,2026-08-11
+INV-2026-00023,order_gl58kxo9t7,2779.82,Madan-Kanda,closed,2026-07-15
+INV-2026-00067,order_3i12vj99t2,44494.53,"Bhagat, Chaudhari and Bhat",closed,2026-07-14
+INV-2026-00034,order_5k8p4q0b8i,8723.44,Dutta Ltd,closed,2026-07-21
+INV-2026-00038,order_71q3vli7kq,94710.55,"Yadav, Loke and Oak",closed,2026-07-18
+INV-2026-00178,order_ueybisbo55,8461.79,Ramachandran LLC,open,2026-07-18
+INV-2026-00059,order_4dnmkza3oa,12334.8,"Bhargava, Karnik and Bir",closed,2026-07-13
+INV-2026-00124,order_votqtxhi15,1959.49,Bajwa Ltd,closed,2026-07-30
+INV-2026-00066,order_j883dhx8bm,110661.14,Roy-Sibal,closed,2026-07-23
+INV-2026-00147,order_rcpprcjiwv,1844.29,Varma-Nayak,closed,2026-07-18
+INV-2026-00131,order_9sojuv0gyu,1859.18,"Saraf, Pai and Murthy",open,2026-07-20
+INV-2026-00088,order_826gyup12s,1948.61,"Baral, Bumb and Saini",closed,2026-08-04
+INV-2026-00100,order_zhwy9hecgz,802.33,"Mistry, Chawla and Desai",closed,2026-07-17
+INV-2026-00060,order_61i2hgj11y,117492.27,Narayanan Inc,open,2026-08-01
+INV-2026-00208,order_7yirq8rtm4,18501.95,Korpal-Chadha,closed,2026-08-02
+INV-2026-00149,order_w82lk2n7h9,6908.02,Kar-Issac,closed,2026-07-19
+INV-2026-00217,order_r1dwwo8nbh,312.73,"Soni, Swaminathan and Sem",closed,2026-08-06
+INV-2026-00001,order_y6dpbhsahx,2026.45,"Choudhury, Bakshi and Maharaj",closed,2026-07-09
+INV-2026-00076,order_epkyrybova,13684.56,Kala-Rattan,closed,2026-07-14
+INV-2026-00189,order_vifiit2018,20127.84,Kapur-Biswas,closed,2026-08-03
+INV-2026-00158,order_ngwyx9trfl,18255.6,Shan and Sons,closed,2026-08-08
+INV-2026-00049,order_rxo1bdje15,1402.54,"Sunder, Biswas and Walia",closed,2026-07-22
+INV-2026-00010,order_pht0hl9xps,13456.21,Kale LLC,open,2026-08-03
+INV-2026-00185,order_9e3nwxuj3a,1547.52,Narain-Nazareth,open,2026-07-04
+INV-2026-00030,order_rjiw1swjck,12388.3,"Yohannan, Lall and Sangha",closed,2026-07-11
+INV-2026-00194,order_v78hu7f0i9,23873.34,Kunda-Pillay,closed,2026-08-06
+INV-2026-00019,order_hmy4sj6bw3,1014.06,Patla-Gaba,closed,2026-07-18
+INV-2026-00153,order_1vsmado8e7,15771.4,"Hayer, Rajagopalan and Talwar",closed,2026-07-24
+INV-2026-00045,order_itfoyqbkk4,19780.22,Naik Group,closed,2026-08-12
+INV-2026-00137,order_q0mftg698s,23756.22,"Murthy, Dash and Mital",closed,2026-08-11
+INV-2026-00053,order_rftmttqlgz,93974.84,"Iyer, Muni and Rastogi",closed,2026-08-07
+INV-2026-00037,order_pnsm43d8w3,101525.16,Apte-Contractor,closed,2026-07-03
+INV-2026-00090,order_7oonncildz,1686.05,Murthy and Sons,open,2026-07-29
+INV-2026-00021,order_id25owf759,644.1,"Loke, Bora and Garg",closed,2026-07-23
+INV-2026-00009,order_3lc58drc11,2779.93,"Sami, Oak and Mall",open,2026-07-24
+INV-2026-00129,order_j70e3p15ah,1770.0,Lal and Sons,closed,2026-07-30
+INV-2026-00134,order_r5l8a78e9r,97361.16,Sarin Inc,closed,2026-08-12
+INV-2026-00144,order_j9rm7pyxdw,19918.12,"Nagy, Shroff and Sathe",closed,2026-07-21
+INV-2026-00202,order_983ep9p9w4,2461.22,"Om, Arora and Salvi",closed,2026-07-29
+INV-2026-00087,order_fgyw6zbnz8,108257.31,Koshy PLC,closed,2026-07-09
+INV-2026-00204,order_dktmonrvbj,700.14,Sharaf-Dua,closed,2026-07-07
+INV-2026-00114,order_swq40zsu9r,12702.85,Parmar and Sons,closed,2026-08-14
+INV-2026-00085,order_duxlez896d,1137.63,Grewal Inc,closed,2026-08-08
+INV-2026-00122,order_ygfliji18k,103564.03,Iyengar Group,closed,2026-07-21
+INV-2026-00203,order_oljq52wspo,996.29,Cherian-Sant,closed,2026-07-06
+INV-2026-00033,order_479t6vxdp5,56932.31,Batta Inc,closed,2026-07-26
+INV-2026-00195,order_5qjicjdan0,33428.97,Contractor and Sons,closed,2026-08-12
+INV-2026-00192,order_448n7odkef,39032.64,Khare and Sons,closed,2026-07-10
+INV-2026-00047,order_7srcbpljd8,36813.6,Khatri-Bhardwaj,closed,2026-07-20
+INV-2026-00082,order_nu80b6ugvs,1075.11,"Bhat, Murthy and Bhandari",closed,2026-08-09
+INV-2026-00040,order_zqakoixntm,951.66,Setty Inc,closed,2026-08-14
+INV-2026-00018,order_tk93tyt7d5,4513.41,Rai LLC,closed,2026-07-11
+INV-2026-00115,order_y5y2jr8kk7,68668.04,"Krish, Chauhan and Pandya",closed,2026-07-22
+INV-2026-00006,order_pvn9er14ff,95773.95,"Bala, Issac and Saini",closed,2026-07-17
+INV-2026-00078,order_oxko8g8qyn,3412.31,Ramakrishnan LLC,closed,2026-08-06
+INV-2026-00032,order_m148p0tvhh,21848.1,Upadhyay Group,closed,2026-07-31
+INV-2026-00190,order_l0mvzmuf84,1854.37,"Baria, Balasubramanian and Kota",closed,2026-07-12
+INV-2026-00004,order_j7xvg0fn9x,16985.06,Balan Inc,closed,2026-07-23
+INV-2026-00048,order_1gspk9p38q,115324.7,Brar Inc,closed,2026-07-18
+INV-2026-00107,order_enulqjidkn,93244.47,Nath and Sons,closed,2026-07-23
+INV-2026-00073,order_4muekipu1w,1143.61,"Chaudhari, Bedi and Zachariah",closed,2026-08-12
+INV-2026-00212,order_sic43olfar,87331.36,Sura and Sons,closed,2026-07-20
+INV-2026-00163,order_1ocjxzefli,106511.6,"Malhotra, Verma and Sundaram",closed,2026-07-07
+INV-2026-00201,order_t5r5rc6zs6,15973.98,"Sangha, Prabhakar and Biswas",closed,2026-08-03
+INV-2026-00156,order_3cd5glqj5s,1898.95,Goda Ltd,closed,2026-07-18
+INV-2026-00207,order_se45bg34iq,2641.41,Sarin-Loyal,closed,2026-07-05
+INV-2026-00177,order_abn7g8b2zx,2120.13,Sarin-Sunder,open,2026-07-03
+INV-2026-00127,order_o119xp9n56,2191.04,Upadhyay-Ratta,closed,2026-07-31
+INV-2026-00123,order_elos6zle6k,87099.92,Mody-Kari,closed,2026-07-16
+INV-2026-00160,order_q01tee13n3,51111.03,Thaman-Sandhu,closed,2026-07-19
+INV-2026-00140,order_8qizk3c9xb,14582.03,Salvi Ltd,closed,2026-07-26
+INV-2026-00157,order_4w3zkwdeek,83074.3,"Shetty, Bedi and Krish",closed,2026-07-08
+INV-2026-00187,order_bwikotckeh,7723.75,Bumb-Singhal,open,2026-07-29
+INV-2026-00155,order_u8iogxpbwh,743.76,"Ahluwalia, Chhabra and Sandal",closed,2026-08-05
+INV-2026-00102,order_n2twdl9zs1,842.65,"Dugal, Magar and Manda",closed,2026-07-24
+INV-2026-00211,order_984uvkyrmj,84242.58,Talwar LLC,closed,2026-07-07
+INV-2026-00096,order_n606n9rr7s,20178.51,Palla Inc,closed,2026-07-18
+INV-2026-00161,order_xi5bj5d5e3,18817.57,"Sehgal, Dutt and Soman",closed,2026-07-07
+INV-2026-00193,order_8y72ivglye,116262.9,Contractor-Kamdar,closed,2026-07-21
+INV-2026-00200,order_jqijc1ydmt,7067.39,"Dara, Barman and Palan",closed,2026-07-12
+INV-2026-00198,order_z0jkibu4fm,724.18,"Issac, Borra and Kibe",closed,2026-07-27
+INV-2026-00173,order_1poxtfdc79,23870.96,"Bahri, Rai and Sood",closed,2026-08-10
+INV-2026-00071,order_o0llj8yrdd,12461.54,Mallick Group,open,2026-07-22
+INV-2026-00206,order_p3jpxgh301,2179.69,"Madan, Yohannan and Sule",closed,2026-07-20
+INV-2026-00116,order_ru7zkut6om,91965.59,"Ray, Dubey and Khalsa",closed,2026-08-15
+INV-2026-00002,order_mf8mdd4v30,1771.34,Kapoor and Sons,closed,2026-07-11
+INV-2026-00036,order_7u6n7hv3iz,5519.72,Sidhu-Wadhwa,closed,2026-07-07
+INV-2026-00136,order_0atvzkhiui,1164.63,Boase-Narayanan,open,2026-08-06
+INV-2026-00219,order_ye9r1f63ai,74427.4,Ravel Ltd,closed,2026-07-22
+INV-2026-00014,order_r56fao72kz,2557.27,"Dash, Radhakrishnan and Brar",closed,2026-07-11
+INV-2026-00112,order_zk3ny9v20y,81403.84,"Divan, Sani and Datta",closed,2026-08-02
+INV-2026-00044,order_w1n6kvpuc8,24866.2,Zacharia PLC,closed,2026-08-08
+INV-2026-00215,order_ebwuwqheyt,60309.83,"Halder, Chada and Khurana",closed,2026-07-19
+INV-2026-00026,order_6wktakpuxq,43224.81,Bhatti-Kakar,closed,2026-07-25
+INV-2026-00151,order_os7yt2m6tw,12308.82,Soman PLC,closed,2026-08-08
+INV-2026-00074,order_gzlma5uofw,82854.52,Chander and Sons,closed,2026-08-14
+INV-2026-00197,order_t6dvwrb7f6,4632.41,Prashad-Ranganathan,closed,2026-07-11
+INV-2026-00174,order_lp8ii7ewbx,80711.53,Pandey LLC,closed,2026-08-13
+INV-2026-00162,order_ffhhcmktlz,90467.69,Lad-Kota,closed,2026-08-09
+INV-2026-00141,order_c4xl9967i6,70220.48,Ghosh-Mitra,closed,2026-07-01
+INV-2026-00075,order_nz1udbfwyj,19414.46,Ray Group,closed,2026-07-30
+INV-2026-00065,order_x4w7kyhqin,64817.04,Sankar LLC,open,2026-07-10
+INV-2026-00068,order_ajepecqnvq,22061.85,Nori-Chopra,closed,2026-07-16
+INV-2026-00020,order_tpac56t4uf,10338.24,Pant-Kadakia,closed,2026-07-11
+INV-2026-00210,order_iv7zzj64qh,2141.94,Raghavan-Nayar,open,2026-08-08
+INV-2026-00220,order_z2nx1wvbd4,27081.76,Mohan Ltd,closed,2026-07-11
+INV-2026-00007,order_84azytjxep,61552.89,Sen PLC,closed,2026-07-30
+INV-2026-00039,order_lrmjkv5usg,15536.69,Memon Group,closed,2026-07-02
+INV-2026-00101,order_ct64z7w2se,20831.29,D’Alia-Chhabra,closed,2026-08-12
+INV-2026-00184,order_msyj9boq0i,408.89,Narang-Kakar,closed,2026-08-15
+INV-2026-00167,order_jn6fokzixz,9641.04,"Buch, Devi and Dora",closed,2026-07-06
+INV-2026-00098,order_os0fb4ypei,1251.91,Sarma PLC,closed,2026-07-05
+INV-2026-00109,order_4ykadejnob,15833.57,"Sane, Andra and Choudhury",closed,2026-08-01
+INV-2026-00050,order_swrpbjek5r,3025.32,Dave Ltd,closed,2026-07-27
+INV-2026-00218,order_a0i5ldslcb,55610.25,Chander LLC,closed,2026-07-13
+INV-2026-00132,order_ofn1r4kz36,10577.13,Vaidya-D’Alia,closed,2026-08-03
+INV-2026-00081,order_pqw2vmcqbn,17145.82,Kalla-Bhardwaj,closed,2026-08-10
+INV-2026-00016,order_o7uubcxulj,1671.14,"Boase, Bath and Kari",open,2026-08-13
+INV-2026-00028,order_uznofy6452,16448.03,Shanker-Dhar,open,2026-07-27
+INV-2026-00015,order_hc0clbr7tc,20233.95,"Memon, Pathak and Handa",closed,2026-07-10
+INV-2026-00119,order_6dut076g5g,7388.03,Sabharwal-Kothari,closed,2026-07-19
+INV-2026-00077,order_a0gnzs43c5,7647.15,Gala Group,closed,2026-07-19
+INV-2026-00008,order_sdw4shnf87,23983.95,Ahuja-Dutta,closed,2026-08-02
