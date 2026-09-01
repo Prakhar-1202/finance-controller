@@ -61,19 +61,20 @@ class ReconciliationMetrics:
     unreconciled_orders: int
     reconciliation_rate: float   # 0.0 – 1.0
     exception_rate: float        # 1.0 - reconciliation_rate
-
-
 def reconciliation_rate(
     result: ReconciliationResult,
     cat_result: Optional[CategorizationResult] = None,
 ) -> ReconciliationMetrics:
     """Compute the headline reconciliation / exception rates.
 
-    If *cat_result* is provided the reconciled set includes Tier 3 recoveries
-    (via ``total_reconciled_order_ids``); otherwise only the strict Tier 1
-    set from ``result.reconciled_order_ids()`` is used.
+    If *cat_result* is provided (or attached to *result.cat_result*), the
+    reconciled set includes Tier 3 recoveries (via ``total_reconciled_order_ids``);
+    otherwise only the strict Tier 1 set from ``result.reconciled_order_ids()``
+    is used.
     """
     total = _total_distinct_orders(result)
+    if cat_result is None:
+        cat_result = result.cat_result
     if cat_result is not None:
         reconciled = len(total_reconciled_order_ids(result, cat_result))
     else:
@@ -123,12 +124,14 @@ class ExceptionCounts:
     tier3_order_exceptions: int           # unit: orders
 
 
-
 def exception_counts(
     result: ReconciliationResult,
     cat_result: Optional[CategorizationResult] = None,
 ) -> ExceptionCounts:
     """Break down exceptions by category across all tiers."""
+    if cat_result is None:
+        cat_result = result.cat_result
+
     # Tier 2 drift categories
     drift_cats: dict = {}
     if not result.drift_classified.empty:
@@ -213,6 +216,9 @@ def precision_recall_f1(
     dict[str, PRFScores] (when ``per_case_type=True``, overall under
     ``"_overall"``).
     """
+    if cat_result is None:
+        cat_result = result.cat_result
+
     if cat_result is not None:
         reconciled_ids = total_reconciled_order_ids(result, cat_result)
     else:

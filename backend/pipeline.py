@@ -16,9 +16,12 @@ drift out of sync). This is the fix for that.
 
 from dataclasses import dataclass
 
+from typing import Optional
+
 import pandas as pd
 
 from backend.data_loader import load_data
+from backend.categorizer import categorize, CategorizationResult
 from backend.matcher.exact import (
     match_ledger_settlement,
     match_settlement_bank,
@@ -45,6 +48,7 @@ class ReconciliationResult:
     duplicates: pd.DataFrame
     drift_classified: pd.DataFrame
     subset_matches: list  # list[SubsetSumMatch]
+    cat_result: Optional[CategorizationResult] = None
 
     def reconciled_order_ids(self) -> set:
         """Orders that are fully reconciled end-to-end: present in both
@@ -85,7 +89,7 @@ def run_pipeline(data_dir: str = "data") -> ReconciliationResult:
         genuinely_unmatched_bank,
     )
 
-    return ReconciliationResult(
+    result = ReconciliationResult(
         bank=bank,
         settlement=settlement,
         ledger=ledger,
@@ -95,3 +99,9 @@ def run_pipeline(data_dir: str = "data") -> ReconciliationResult:
         drift_classified=drift_classified,
         subset_matches=subset_matches,
     )
+
+    # --- Tier 3 ---
+    result.cat_result = categorize(result)
+
+    return result
+

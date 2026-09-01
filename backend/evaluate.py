@@ -41,10 +41,12 @@ import argparse
 import pandas as pd
 
 from backend.pipeline import run_pipeline
+from backend.categorizer import categorize, total_reconciled_order_ids
 
 
 def evaluate_order_level(result, ground_truth: pd.DataFrame):
-    reconciled_ids = result.reconciled_order_ids()
+    cat_result = result.cat_result if result.cat_result is not None else categorize(result)
+    reconciled_ids = total_reconciled_order_ids(result, cat_result)
 
     gt = ground_truth.copy()
     gt["predicted_match"] = gt["order_id"].isin(reconciled_ids)

@@ -12,11 +12,14 @@ Usage:
 import argparse
 
 from backend.pipeline import run_pipeline
+from backend.categorizer import categorize, total_reconciled_order_ids
 
 
 def print_report(result):
     ls_result, sb_result = result.ls_result, result.sb_result
     duplicates, drift_classified = result.duplicates, result.drift_classified
+    cat_result = result.cat_result if result.cat_result is not None else categorize(result)
+    total_reconciled_ids = total_reconciled_order_ids(result, cat_result)
 
     total_orders = len(
         result.ledger.merge(result.settlement, on="order_id", how="outer").drop_duplicates(
@@ -55,11 +58,19 @@ def print_report(result):
     print(f"\n--- Tier 2: Subset-sum fallback matches ---")
     print(f"  Resolved via subset-sum: {len(result.subset_matches)}")
 
+    print(f"\n--- Tier 3: Batch decomposition ---")
+    if not cat_result.batch_report.empty:
+        print(cat_result.batch_report["category"].value_counts().to_string())
+        print(f"  Recovered orders from problem batches: {len(cat_result.resolved_order_ids)}")
+        print(f"  Individual order exceptions:          {len(cat_result.order_exceptions)}")
+    else:
+        print("  (none)")
+
     print(f"\n--- Headline numbers ---")
     auto_match_rate = tier1_batches_matched / tier1_batches_total if tier1_batches_total else 0
     print(f"  Tier 1 batch auto-match rate: {auto_match_rate:.1%}")
-    print(f"  Fully reconciled orders (end-to-end, no ambiguity): "
-          f"{len(result.reconciled_order_ids())} / {total_orders}")
+    print(f"  Tier 1 strict reconciled orders: {len(result.reconciled_order_ids())} / {total_orders}")
+    print(f"  Total reconciled orders (incl. Tier 3): {len(total_reconciled_ids)} / {total_orders}")
 
     print("\nFor precision/recall against ground_truth.csv, run:")
     print("  python -m backend.evaluate --data-dir data")
