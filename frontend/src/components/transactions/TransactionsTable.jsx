@@ -1,126 +1,100 @@
+import React from "react";
+import { MoreHorizontal } from "lucide-react";
 import TransactionStatusBadge from "./TransactionStatusBadge";
 
-// Column definitions matching the actual /api/transactions item shape.
-// Each column maps a display label to the corresponding field key on
-// a transaction item. Kept as config so columns can be reordered or
-// extended without touching the render logic below.
-const COLUMNS = [
-  { key: "order_id", label: "Order ID" },
-  { key: "customer", label: "Customer" },
-  { key: "invoice_amount", label: "Invoice Amount" },
-  { key: "net_amount", label: "Net Amount" },
-  { key: "reconciliation_status", label: "Reconciliation Status" },
-  { key: "tier", label: "Tier" },
-  { key: "category", label: "Category" },
-  { key: "utr", label: "UTR" },
-  { key: "created_at", label: "Created At" },
-];
-
-// Formats a plain-text cell value for display only (fallback for
-// missing/empty values). Not business logic — no computation,
-// matching, or categorization happens here.
-function formatCellValue(value) {
-  if (value === undefined || value === null || value === "") return "—";
-  return value;
+function formatINR(val) {
+  if (val === undefined || val === null || val === "") return "—";
+  const num = Number(val);
+  if (Number.isNaN(num)) return String(val);
+  return `₹${num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// Formats amount fields for display. Purely cosmetic number formatting
-// (e.g. 2 decimal places) — not a financial calculation.
-function formatAmount(value) {
-  if (value === undefined || value === null || value === "") return "—";
-  const numericValue = Number(value);
-  if (Number.isNaN(numericValue)) return value;
-  return numericValue.toFixed(2);
+function formatDate(val) {
+  if (!val) return "—";
+  try {
+    const d = new Date(val);
+    if (Number.isNaN(d.getTime())) return String(val);
+    return d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return String(val);
+  }
 }
 
-/**
- * TransactionsTable
- * Purely presentational, responsive table for displaying transaction
- * items as returned by GET /api/transactions (the `items` array from
- * the paginated response). Does not fetch data, compute anything, or
- * manage state — it only renders whatever is passed in.
- *
- * Props:
- * - transactions: Array<{
- *     order_id?: string | number,
- *     reconciliation_status?: string,
- *     tier?: string | number,
- *     invoice_id?: string | number,
- *     customer?: string,
- *     invoice_amount?: number | string,
- *     ledger_status?: string,
- *     created_at?: string,
- *     settlement_id?: string,
- *     net_amount?: number | string,
- *     utr?: string,
- *     category?: string,
- *     reason?: string,
- *     ...other fields (ignored by this table)
- *   }>
- */
+function getTierClass(tier) {
+  const str = String(tier || "").toLowerCase();
+  if (str.includes("1")) return "tier-1";
+  if (str.includes("2")) return "tier-2";
+  if (str.includes("3")) return "tier-3";
+  return "";
+}
+
 function TransactionsTable({ transactions = [] }) {
   const hasData = transactions.length > 0;
 
   return (
-    <div className="transactions-table-wrapper">
-      <table className="transactions-table">
+    <div className="table-responsive">
+      <table className="stitch-table" aria-label="Transaction Ledger Table">
         <thead>
           <tr>
-            {COLUMNS.map((column) => (
-              <th key={column.key} scope="col">
-                {column.label}
-              </th>
-            ))}
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th className="th-right">Invoice Amount</th>
+            <th className="th-right">Net Amount</th>
+            <th>Reconciliation</th>
+            <th>Tier</th>
+            <th>Category</th>
+            <th>UTR</th>
+            <th>Created At</th>
+            <th style={{ width: "40px" }} aria-label="Actions"></th>
           </tr>
         </thead>
         <tbody>
           {hasData ? (
-            transactions.map((transaction, index) => {
-              const rowKey =
-                transaction.order_id ??
-                transaction.invoice_id ??
-                `txn-${index}`;
+            transactions.map((txn, index) => {
+              const rowKey = txn.order_id || txn.invoice_id || `txn-${index}`;
+              const tierStr = txn.tier || (txn.reconciliation_status === "reconciled" ? "Tier 1" : "Tier 2");
 
               return (
                 <tr key={rowKey}>
-                  {COLUMNS.map((column) => {
-                    if (column.key === "reconciliation_status") {
-                      return (
-                        <td key={column.key} data-label={column.label}>
-                          <TransactionStatusBadge
-                            status={transaction.reconciliation_status}
-                          />
-                        </td>
-                      );
-                    }
-
-                    if (
-                      column.key === "invoice_amount" ||
-                      column.key === "net_amount"
-                    ) {
-                      return (
-                        <td key={column.key} data-label={column.label}>
-                          {formatAmount(transaction[column.key])}
-                        </td>
-                      );
-                    }
-
-                    return (
-                      <td key={column.key} data-label={column.label}>
-                        {formatCellValue(transaction[column.key])}
-                      </td>
-                    );
-                  })}
+                  <td className="td-mono">{txn.order_id || "—"}</td>
+                  <td className="td-entity">{txn.customer || "Direct / Gateway"}</td>
+                  <td className="td-mono td-right">{formatINR(txn.invoice_amount)}</td>
+                  <td className="td-mono td-right">{formatINR(txn.net_amount)}</td>
+                  <td>
+                    <TransactionStatusBadge status={txn.reconciliation_status} />
+                  </td>
+                  <td className={`td-tier ${getTierClass(tierStr)}`}>
+                    {tierStr}
+                  </td>
+                  <td className="td-category">{txn.category || txn.ledger_status || "Settlement"}</td>
+                  <td className="td-mono" style={{ fontSize: "12px", color: "#5A6A85" }}>
+                    {txn.utr || "PENDING"}
+                  </td>
+                  <td style={{ fontSize: "12px", color: "#8896AB" }}>
+                    {formatDate(txn.created_at)}
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    <button
+                      type="button"
+                      style={{ color: "#7587a7", padding: "4px" }}
+                      title="More transaction actions"
+                      aria-label="More options"
+                    >
+                      <MoreHorizontal size={16} />
+                    </button>
+                  </td>
                 </tr>
               );
             })
           ) : (
             <tr>
-              <td
-                colSpan={COLUMNS.length}
-                className="transactions-table-empty"
-              >
-                No transactions to display
+              <td colSpan={10} style={{ textAlign: "center", padding: "48px 24px", color: "#8896AB" }}>
+                No transactions match the selected criteria
               </td>
             </tr>
           )}

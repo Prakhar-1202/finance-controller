@@ -1,89 +1,144 @@
+import React from "react";
 import {
-    ListOrdered,
-    CheckCircle2,
-    AlertCircle,
-    Percent,
-    TrendingDown,
-  } from "lucide-react";
-  
-  // Static card config — maps each metric to its label, icon, and the
-  // key it reads from the `metrics` prop. Kept outside the component so
-  // it isn't recreated on every render and is easy to extend later.
-  const CARD_CONFIG = [
-    {
-      key: "total_orders",
-      label: "Total Orders",
-      icon: ListOrdered,
-    },
-    {
-      key: "reconciled_orders",
-      label: "Reconciled Orders",
-      icon: CheckCircle2,
-    },
-    {
-      key: "unreconciled_orders",
-      label: "Unreconciled Orders",
-      icon: AlertCircle,
-    },
-    {
-      key: "reconciliation_rate",
-      label: "Reconciliation Rate",
-      icon: Percent,
-    },
-    {
-      key: "exception_rate",
-      label: "Exception Rate",
-      icon: TrendingDown,
-    },
-  ];
-  
-  // Keys whose values are rates/percentages rather than raw counts,
-  // used only to decide display formatting — no calculation happens here.
-  const RATE_KEYS = new Set(["reconciliation_rate", "exception_rate"]);
-  
-  /**
-   * MetricsCards
-   * Purely presentational grid of reconciliation metric cards.
-   *
-   * Displays exactly what is passed in via `metrics`. Does not fetch data,
-   * compute derived values, or manage any state — the backend (metrics.py)
-   * is the single source of truth for these numbers.
-   *
-   * Props:
-   * - metrics: {
-   *     total_orders: number,
-   *     reconciled_orders: number,
-   *     unreconciled_orders: number,
-   *     reconciliation_rate: number, // e.g. 96.4 (percent)
-   *     exception_rate: number,      // e.g. 3.6 (percent)
-   *   }
-   */
-  function MetricsCards({ metrics = {} }) {
-    return (
-      <div className="metrics-cards">
-        {CARD_CONFIG.map(({ key, label, icon: Icon }) => {
-          const rawValue = metrics[key];
-          const hasValue = rawValue !== undefined && rawValue !== null;
-          const displayValue = hasValue
-            ? RATE_KEYS.has(key)
-              ? `${rawValue}%`
-              : rawValue
-            : "—";
-  
-          return (
-            <div key={key} className="metric-card" data-metric={key}>
-              <div className="metric-card-icon">
-                <Icon size={20} />
-              </div>
-              <div className="metric-card-content">
-                <span className="metric-card-label">{label}</span>
-                <span className="metric-card-value">{displayValue}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-  
-  export default MetricsCards;
+  TrendingUp,
+  CheckCircle2,
+  AlertTriangle,
+  ShieldCheck,
+  AlertCircle,
+} from "lucide-react";
+
+function formatNumber(val) {
+  if (val === undefined || val === null || val === "") return "—";
+  const num = Number(val);
+  return Number.isNaN(num) ? String(val) : num.toLocaleString();
+}
+
+function formatRate(val) {
+  if (val === undefined || val === null || val === "") return "—";
+  const num = Number(val);
+  if (Number.isNaN(num)) return String(val);
+  const pct = num <= 1.0 && num >= 0 ? num * 100 : num;
+  return pct % 1 === 0 ? pct.toFixed(0) : pct.toFixed(1);
+}
+
+function MetricsCards({ metrics = {} }) {
+  const total = metrics.total_orders ?? 0;
+  const reconciled = metrics.reconciled_orders ?? 0;
+  const unreconciled = metrics.unreconciled_orders ?? 0;
+  const reconRate = metrics.reconciliation_rate;
+  const excRate = metrics.exception_rate;
+
+  const reconPctFormatted = formatRate(reconRate);
+  const excPctFormatted = formatRate(excRate);
+
+  return (
+    <section className="metrics-cards" aria-label="Summary Performance Indicators">
+      {/* 1. Total Orders */}
+      <article className="metric-card metric-card-slate">
+        <div className="metric-card-top">
+          <span className="metric-card-label">Total orders</span>
+          <div className="metric-card-icon" aria-hidden="true">
+            <TrendingUp size={16} strokeWidth={2.2} />
+          </div>
+        </div>
+        <div className="metric-card-content">
+          <div className="metric-card-value-row">
+            <span className="metric-card-value">{formatNumber(total)}</span>
+          </div>
+          <div className="metric-card-bottom">
+            <span className="metric-card-badge neutral">Active cycle</span>
+            <span className="metric-card-subtext">total considered</span>
+          </div>
+        </div>
+      </article>
+
+      {/* 2. Reconciled Orders */}
+      <article className="metric-card metric-card-green">
+        <div className="metric-card-top">
+          <span className="metric-card-label">Reconciled orders</span>
+          <div className="metric-card-icon" aria-hidden="true">
+            <CheckCircle2 size={16} strokeWidth={2.2} />
+          </div>
+        </div>
+        <div className="metric-card-content">
+          <div className="metric-card-value-row">
+            <span className="metric-card-value">{formatNumber(reconciled)}</span>
+          </div>
+          <div className="metric-card-bottom">
+            <span className="metric-card-badge positive">
+              {reconPctFormatted !== "—" ? `${reconPctFormatted}%` : "Clean match"}
+            </span>
+            <span className="metric-card-subtext">of total orders</span>
+          </div>
+        </div>
+      </article>
+
+      {/* 3. Unreconciled Orders */}
+      <article className="metric-card metric-card-amber">
+        <div className="metric-card-top">
+          <span className="metric-card-label">Unreconciled orders</span>
+          <div className="metric-card-icon" aria-hidden="true">
+            <AlertTriangle size={16} strokeWidth={2.2} />
+          </div>
+        </div>
+        <div className="metric-card-content">
+          <div className="metric-card-value-row">
+            <span className="metric-card-value">{formatNumber(unreconciled)}</span>
+          </div>
+          <div className="metric-card-bottom">
+            <span className="metric-card-badge warning">Needs review</span>
+            <span className="metric-card-subtext">attention required</span>
+          </div>
+        </div>
+      </article>
+
+      {/* 4. Reconciliation Rate */}
+      <article className="metric-card metric-card-indigo">
+        <div className="metric-card-top">
+          <span className="metric-card-label">Reconciliation rate</span>
+          <div className="metric-card-icon" aria-hidden="true">
+            <ShieldCheck size={16} strokeWidth={2.2} />
+          </div>
+        </div>
+        <div className="metric-card-content">
+          <div className="metric-card-value-row">
+            <span className="metric-card-value">{reconPctFormatted}</span>
+            {reconPctFormatted !== "—" && (
+              <span className="metric-card-percent-mark">%</span>
+            )}
+          </div>
+          <div className="metric-card-bottom">
+            <span className="metric-card-badge positive">High accuracy</span>
+            <span className="metric-card-subtext">Tier 1 + 3 combined</span>
+          </div>
+        </div>
+      </article>
+
+      {/* 5. Exception Rate */}
+      <article className="metric-card metric-card-rose">
+        <div className="metric-card-top">
+          <span className="metric-card-label">Exception rate</span>
+          <div className="metric-card-icon" aria-hidden="true">
+            <AlertCircle size={16} strokeWidth={2.2} />
+          </div>
+        </div>
+        <div className="metric-card-content">
+          <div className="metric-card-value-row">
+            <span className="metric-card-value">{excPctFormatted}</span>
+            {excPctFormatted !== "—" && (
+              <span className="metric-card-percent-mark">%</span>
+            )}
+          </div>
+          <div className="metric-card-bottom">
+            <span className="metric-card-badge warning">
+              {formatNumber(unreconciled)} exceptions
+            </span>
+            <span className="metric-card-subtext">pipeline breaks</span>
+          </div>
+        </div>
+      </article>
+    </section>
+  );
+}
+
+export default MetricsCards;

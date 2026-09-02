@@ -1,116 +1,75 @@
-import { Receipt } from "lucide-react";
+import React from "react";
 import TransactionStatusBadge from "../transactions/TransactionStatusBadge";
 
-// Formats a plain-text field for display only (fallback for missing
-// values). Not business logic — no computation, matching, or
-// categorization happens here.
-function formatValue(value) {
-  if (value === undefined || value === null || value === "") return "—";
-  return value;
+function formatINR(val) {
+  if (val === undefined || val === null || val === "") return "—";
+  const num = Number(val);
+  if (Number.isNaN(num)) return String(val);
+  return `₹${num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// Formats amount fields for display only (cosmetic decimal formatting).
-// Not a financial calculation.
-function formatAmount(value) {
-  if (value === undefined || value === null || value === "") return "—";
-  const numericValue = Number(value);
-  if (Number.isNaN(numericValue)) return value;
-  return numericValue.toFixed(2);
-}
-
-/**
- * RecentActivity
- * Purely presentational dashboard widget showing a compact list of
- * recent transactions. Renders exactly the items it's given, in the
- * order it's given them — it does not sort, filter, or determine what
- * counts as "recent"; that ordering is expected to come from the
- * backend/parent (e.g. already sorted by created_at, already limited
- * to N most recent items).
- *
- * Props:
- * - transactions: Array<{
- *     order_id?: string | number,
- *     customer?: string,
- *     invoice_amount?: number | string,
- *     net_amount?: number | string,
- *     reconciliation_status?: string,
- *     tier?: string | number,
- *     category?: string,
- *     utr?: string,
- *     created_at?: string,
- *     ...other fields (ignored by this component)
- *   }>
- * - limit: number -> optional cap on how many items to render (purely
- *                     a display slice, not a data/business decision)
- */
-function RecentActivity({ transactions = [], limit }) {
-  const hasData = transactions.length > 0;
-  const visibleTransactions =
-    typeof limit === "number" ? transactions.slice(0, limit) : transactions;
+function RecentActivity({
+  transactions = [],
+  limit = 5,
+  onNavigate = () => {},
+}) {
+  const visibleItems = typeof limit === "number" ? transactions.slice(0, limit) : transactions;
+  const hasData = visibleItems.length > 0;
 
   return (
-    <div className="recent-activity">
+    <div className="recent-activity-card" aria-label="Recent Reconciliation Activity">
       <div className="recent-activity-header">
-        <span className="recent-activity-title">Recent Activity</span>
+        <h3 className="recent-activity-title">Recent Activity</h3>
+        <button
+          type="button"
+          className="recent-activity-view-all"
+          onClick={() => onNavigate("transactions")}
+        >
+          View all
+        </button>
       </div>
 
-      {hasData ? (
-        <ul className="recent-activity-list">
-          {visibleTransactions.map((transaction, index) => {
-            const rowKey =
-              transaction.order_id ?? transaction.utr ?? `activity-${index}`;
+      <div className="table-responsive">
+        <table className="stitch-table">
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>Entity</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Tier</th>
+            </tr>
+          </thead>
+          <tbody>
+            {hasData ? (
+              visibleItems.map((txn, idx) => {
+                const key = txn.order_id || txn.invoice_id || `act-${idx}`;
+                const amount = txn.invoice_amount ?? txn.net_amount;
+                const entity = txn.customer || txn.utr || "Direct Gateway";
+                const tierLabel = txn.tier || (txn.reconciliation_status === "reconciled" ? "Tier 1" : "Tier 2");
 
-            return (
-              <li key={rowKey} className="recent-activity-item">
-                <div className="recent-activity-icon">
-                  <Receipt size={16} />
-                </div>
-
-                <div className="recent-activity-main">
-                  <div className="recent-activity-row">
-                    <span className="recent-activity-order">
-                      {formatValue(transaction.order_id)}
-                    </span>
-                    <TransactionStatusBadge
-                      status={transaction.reconciliation_status}
-                    />
-                  </div>
-
-                  <div className="recent-activity-row recent-activity-subtext">
-                    <span className="recent-activity-customer">
-                      {formatValue(transaction.customer)}
-                    </span>
-                    <span className="recent-activity-tier">
-                      Tier {formatValue(transaction.tier)}
-                    </span>
-                    <span className="recent-activity-category">
-                      {formatValue(transaction.category)}
-                    </span>
-                  </div>
-
-                  <div className="recent-activity-row recent-activity-subtext">
-                    <span className="recent-activity-amount">
-                      Invoice: {formatAmount(transaction.invoice_amount)}
-                    </span>
-                    <span className="recent-activity-amount">
-                      Net: {formatAmount(transaction.net_amount)}
-                    </span>
-                    <span className="recent-activity-utr">
-                      UTR: {formatValue(transaction.utr)}
-                    </span>
-                  </div>
-
-                  <div className="recent-activity-timestamp">
-                    {formatValue(transaction.created_at)}
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <div className="recent-activity-empty">No recent activity</div>
-      )}
+                return (
+                  <tr key={key}>
+                    <td className="td-mono">{txn.order_id || "—"}</td>
+                    <td className="td-entity">{entity}</td>
+                    <td className="td-mono">{formatINR(amount)}</td>
+                    <td>
+                      <TransactionStatusBadge status={txn.reconciliation_status} />
+                    </td>
+                    <td className="td-tier">{tierLabel}</td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan={5} style={{ textAlign: "center", padding: "32px", color: "#8896AB" }}>
+                  No recent transactions available
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

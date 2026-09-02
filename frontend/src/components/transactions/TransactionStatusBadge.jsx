@@ -1,68 +1,53 @@
-import { CheckCircle2, XCircle, AlertTriangle, HelpCircle } from "lucide-react";
+import React from "react";
 
-// Maps known status values (as returned by the backend) to display
-// label, icon, and a CSS class hook. Purely a presentation lookup —
-// the backend is the single source of truth for what status a
-// transaction actually has.
-const STATUS_CONFIG = {
-  matched: {
-    label: "Matched",
-    icon: CheckCircle2,
-    className: "status-matched",
-  },
+const STATUS_MAP = {
   reconciled: {
     label: "Reconciled",
-    icon: CheckCircle2,
-    className: "status-matched",
+    className: "reconciled",
   },
-  unmatched: {
-    label: "Unmatched",
-    icon: XCircle,
-    className: "status-unmatched",
+  tier3_recovered: {
+    label: "Tier 3 Recovered",
+    className: "tier3_recovered",
+  },
+  matched: {
+    label: "Reconciled",
+    className: "reconciled",
   },
   unreconciled: {
     label: "Unreconciled",
-    icon: XCircle,
-    className: "status-unmatched",
+    className: "unreconciled",
+  },
+  orphan_ledger: {
+    label: "Orphan Ledger",
+    className: "orphan_ledger",
+  },
+  orphan_settlement: {
+    label: "Orphan Settlement",
+    className: "orphan_settlement",
+  },
+  unmatched: {
+    label: "Unreconciled",
+    className: "unreconciled",
   },
   exception: {
     label: "Exception",
-    icon: AlertTriangle,
-    className: "status-exception",
-  },
-  pending: {
-    label: "Pending",
-    icon: HelpCircle,
-    className: "status-pending",
+    className: "exception",
   },
 };
 
-const DEFAULT_CONFIG = {
-  label: "Unknown",
-  icon: HelpCircle,
-  className: "status-unknown",
+const DEFAULT_STATUS = {
+  label: "Pending",
+  className: "unreconciled",
 };
 
-/**
- * TransactionStatusBadge
- * Small reusable presentational badge for showing a transaction's
- * reconciliation status. Renders an icon + label based purely on the
- * `status` prop — does not determine or infer status itself.
- *
- * Props:
- * - status: string  -> e.g. "matched", "unmatched", "exception", "pending"
- *                       (case-insensitive; unrecognized values fall back
- *                       to a neutral "Unknown" badge)
- */
 function TransactionStatusBadge({ status }) {
-  const normalizedStatus = (status || "").toLowerCase();
-  const config = STATUS_CONFIG[normalizedStatus] || DEFAULT_CONFIG;
-  const Icon = config.icon;
+  const normalized = (status || "").toLowerCase();
+  const config = STATUS_MAP[normalized] || DEFAULT_STATUS;
 
   return (
-    <span className={`status-badge ${config.className}`}>
-      <Icon size={14} className="status-badge-icon" />
-      <span className="status-badge-label">{config.label}</span>
+    <span className={`status-pill ${config.className}`}>
+      <span className="status-pill-dot" />
+      <span>{config.label}</span>
     </span>
   );
 }

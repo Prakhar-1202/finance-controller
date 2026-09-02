@@ -1,98 +1,124 @@
-import {
-    PieChart,
-    Pie,
-    Cell,
-    Tooltip,
-    Legend,
-    ResponsiveContainer,
-  } from "recharts";
-  
-  // Static color palette for exception categories, cycled by index.
-  // Purely a display concern — does not affect categorization, which
-  // is owned entirely by the backend's categorizer.py.
-  const CATEGORY_COLORS = [
-    "#dc2626", // red
-    "#f59e0b", // amber
-    "#2563eb", // blue
-    "#7c3aed", // violet
-    "#0d9488", // teal
-    "#db2777", // pink
-    "#65a30d", // lime
+import React from "react";
+import { ArrowUpRight, SlidersHorizontal } from "lucide-react";
+
+function formatCurrency(val) {
+  if (val === undefined || val === null || val === 0) return "₹0.00";
+  const num = Number(val);
+  return Number.isNaN(num) ? String(val) : `₹${num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function ExceptionBreakdown({
+  exceptions = [],
+  exceptionsData = {},
+  onNavigate = () => {},
+}) {
+  // Extract groups from structured exceptionsData or count from flat exceptions
+  const duplicateRows = exceptionsData?.duplicate_bank_rows || [];
+  const driftBatches = exceptionsData?.drift_batches || [];
+  const tier3Exceptions = exceptionsData?.tier3_order_exceptions || [];
+  const batchReports = exceptionsData?.tier3_batch_report || [];
+
+  // Sum amounts where available
+  const duplicateSum = duplicateRows.reduce((acc, r) => acc + (Number(r.amount) || 0), 0);
+  const driftSum = driftBatches.reduce((acc, r) => acc + Math.abs(Number(r.diff) || 0), 0);
+  const batchReportSum = batchReports.reduce((acc, r) => acc + Math.abs(Number(r.diff) || 0), 0);
+
+  // Group items
+  const items = [
+    {
+      num: "01",
+      name: "Duplicate bank rows",
+      count: duplicateRows.length,
+      desc: "Same UTR posted more than once",
+      amountText: duplicateSum > 0 ? formatCurrency(duplicateSum) : `${duplicateRows.length} flagged`,
+      tone: "amber",
+      fillPct: duplicateRows.length > 0 ? 80 : 10,
+    },
+    {
+      num: "02",
+      name: "Amount drift batches",
+      count: driftBatches.length,
+      desc: "Invoice and settlement differ",
+      amountText: driftSum > 0 ? formatCurrency(driftSum) : `${driftBatches.length} batches`,
+      tone: "cyan",
+      fillPct: driftBatches.length > 0 ? 65 : 10,
+    },
+    {
+      num: "03",
+      name: "Tier 3 batch reports",
+      count: batchReports.length,
+      desc: "Unresolved batch health status",
+      amountText: batchReportSum > 0 ? formatCurrency(batchReportSum) : `${batchReports.length} reports`,
+      tone: "rose",
+      fillPct: batchReports.length > 0 ? 50 : 10,
+    },
+    {
+      num: "04",
+      name: "Tier 3 order exceptions",
+      count: tier3Exceptions.length,
+      desc: "Requires controller review",
+      amountText: `${tier3Exceptions.length} orders`,
+      tone: "purple",
+      fillPct: tier3Exceptions.length > 0 ? 35 : 10,
+    },
   ];
-  
-  const FALLBACK_CATEGORY_LABEL = "Uncategorized";
-  
-  /**
-   * ExceptionBreakdown
-   * Purely presentational Recharts visualization showing the distribution
-   * of reconciliation exceptions by category.
-   *
-   * The backend (categorizer.py) is the single source of truth for what
-   * category each exception belongs to. This component only counts how
-   * many already-categorized exceptions fall into each category label,
-   * for chart rendering — it does not perform any reconciliation,
-   * matching, or categorization logic itself.
-   *
-   * Props:
-   * - exceptions: Array<{
-   *     category?: string,   // e.g. "AMOUNT_MISMATCH", "MISSING_IN_BANK"
-   *     ...other exception fields (ignored by this component)
-   *   }>
-   */
-  function ExceptionBreakdown({ exceptions = [] }) {
-    const categoryCounts = exceptions.reduce((counts, exception) => {
-      const category = exception?.category || FALLBACK_CATEGORY_LABEL;
-      counts[category] = (counts[category] || 0) + 1;
-      return counts;
-    }, {});
-  
-    const chartData = Object.entries(categoryCounts).map(([category, count]) => ({
-      name: category,
-      value: count,
-    }));
-  
-    const hasData = chartData.length > 0;
-  
-    return (
-      <div className="exception-breakdown">
-        <div className="exception-breakdown-header">
-          <span className="exception-breakdown-title">
-            Exception Breakdown by Category
-          </span>
+
+  return (
+    <div className="breakdown-card" aria-label="Exception Breakdown">
+      {/* Header */}
+      <div className="breakdown-card-header">
+        <div>
+          <span className="breakdown-card-tag">Exception Breakdown</span>
+          <h3 className="breakdown-card-title">Where attention is needed</h3>
         </div>
-  
-        <div className="exception-breakdown-body">
-          {hasData ? (
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie
-                  data={chartData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={90}
-                  label
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell
-                      key={entry.name}
-                      fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="exception-breakdown-empty">
-              No exceptions to display
-            </div>
-          )}
-        </div>
+        <button
+          type="button"
+          style={{ color: "#7587a7", padding: "6px", borderRadius: "8px", border: "1px solid #E6EBF1" }}
+          title="Filter categories"
+          aria-label="Filter categories"
+        >
+          <SlidersHorizontal size={16} />
+        </button>
       </div>
-    );
-  }
-  
-  export default ExceptionBreakdown;
+
+      {/* 4-Item Grid */}
+      <div className="breakdown-grid">
+        {items.map((item) => (
+          <div key={item.num} className="breakdown-item">
+            <div className={`breakdown-item-num ${item.tone}`}>{item.num}</div>
+            <div className="breakdown-item-main">
+              <div className="breakdown-item-top">
+                <span className="breakdown-item-name">{item.name}</span>
+                <span className="breakdown-item-count">{item.count}</span>
+              </div>
+              <div className="breakdown-item-desc-row">
+                <span>{item.desc}</span>
+                <span className="breakdown-item-amount">{item.amountText}</span>
+              </div>
+              <div className="breakdown-progress-track">
+                <div
+                  className={`breakdown-progress-fill ${item.tone}`}
+                  style={{ width: `${item.fillPct}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer Navigation Link */}
+      <div className="breakdown-card-footer">
+        <button
+          type="button"
+          className="breakdown-footer-link"
+          onClick={() => onNavigate("exceptions")}
+        >
+          <span>View all exceptions</span>
+          <ArrowUpRight size={15} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default ExceptionBreakdown;

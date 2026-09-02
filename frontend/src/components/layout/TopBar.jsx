@@ -1,45 +1,83 @@
-import { RefreshCw, CheckCircle2 } from "lucide-react";
+import React from "react";
+import { Search, RefreshCw, Bell } from "lucide-react";
 
-/**
- * TopBar
- * Purely presentational top navigation bar for the reconciliation dashboard.
- *
- * No routing, no API calls — refresh behavior and loading state are fully
- * controlled by the parent via props, so this can be wired to a real
- * reconciliation trigger (or polling) later without changing this file.
- *
- * Props:
- * - onRefresh: function  -> callback invoked when the refresh button is clicked
- * - isRefreshing: boolean -> when true, disables the button and shows a spinning icon
- */
-function TopBar({ onRefresh = () => {}, isRefreshing = false }) {
+const PAGE_TITLES = {
+  dashboard: "Overview",
+  transactions: "Transactions",
+  exceptions: "Exceptions",
+  reports: "Reports",
+  settings: "Settings",
+};
+
+function TopBar({
+  activePage = "dashboard",
+  onRefresh = () => {},
+  isRefreshing = false,
+}) {
+  const currentTitle = PAGE_TITLES[activePage] || "Overview";
+
   return (
     <header className="topbar">
-      <div className="topbar-titles">
-        <h1 className="topbar-title">Finance Controller</h1>
-        <p className="topbar-subtitle">
-          Reconciliation &amp; Monitoring Dashboard
-        </p>
+      {/* Breadcrumbs & Live System Status */}
+      <div className="topbar-left">
+        <div className="topbar-breadcrumbs">
+          <span className="topbar-breadcrumb-parent">Finance Ops</span>
+          <span className="topbar-breadcrumb-sep">/</span>
+          <span className="topbar-breadcrumb-current">{currentTitle}</span>
+        </div>
+
+        <div className="topbar-status-row">
+          <div className="topbar-pulse-indicator">
+            <span className="topbar-pulse-dot" />
+            <span>All systems operational</span>
+          </div>
+          <span className="topbar-sync-text">Live sync active</span>
+        </div>
       </div>
 
-      <div className="topbar-actions">
-        <div className="topbar-status" role="status">
-          <CheckCircle2 size={16} className="topbar-status-icon" />
-          <span>System Operational</span>
+      {/* Global Actions */}
+      <div className="topbar-right">
+        <div className="topbar-search-box">
+          <Search size={15} className="topbar-search-icon" />
+          <input
+            type="text"
+            className="topbar-search-input"
+            placeholder="Search orders, UTRs..."
+            aria-label="Search orders and UTRs"
+          />
         </div>
 
         <button
           type="button"
-          className="topbar-refresh-btn"
+          className="topbar-icon-btn"
           onClick={onRefresh}
           disabled={isRefreshing}
-          aria-busy={isRefreshing}
+          title="Refresh reconciliation"
+          aria-label="Refresh reconciliation"
         >
           <RefreshCw
             size={16}
-            className={`topbar-refresh-icon${isRefreshing ? " spinning" : ""}`}
+            className={isRefreshing ? "spinning" : ""}
+            style={isRefreshing ? { animation: "spin 0.8s linear infinite" } : {}}
           />
-          <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+        </button>
+
+        <button
+          type="button"
+          className="topbar-icon-btn"
+          title="Notifications"
+          aria-label="Notifications"
+        >
+          <Bell size={16} />
+          <span className="topbar-notif-badge" />
+        </button>
+
+        <button
+          type="button"
+          className="topbar-avatar-btn"
+          title="Alex Morgan - Finance Controller"
+        >
+          AM
         </button>
       </div>
     </header>
