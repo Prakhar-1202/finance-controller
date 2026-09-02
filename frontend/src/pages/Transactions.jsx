@@ -13,13 +13,19 @@ const STATUS_OPTIONS = [
   { value: "exception", label: "Exceptions" },
 ];
 
-function Transactions() {
+function Transactions({ searchQuery = "", dataDir = "data", datasetVersion = 0 }) {
   const [items, setItems] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(DEFAULT_PAGE_SIZE);
   const [total, setTotal] = useState(0);
   const [statusFilter, setStatusFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(searchQuery);
+
+  useEffect(() => {
+    if (searchQuery !== undefined) {
+      setSearchTerm(searchQuery);
+    }
+  }, [searchQuery]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,6 +38,7 @@ function Transactions() {
       const params = {
         page: targetPage,
         page_size: pageSize,
+        data_dir: dataDir,
       };
       if (currentStatus && currentStatus !== "all") {
         params.status = currentStatus;
@@ -46,11 +53,11 @@ function Transactions() {
     } finally {
       setIsLoading(false);
     }
-  }, [pageSize]);
+  }, [pageSize, dataDir]);
 
   useEffect(() => {
     loadTransactions(1, statusFilter);
-  }, [loadTransactions, statusFilter]);
+  }, [loadTransactions, statusFilter, datasetVersion]);
 
   const totalPages = total > 0 ? Math.ceil(total / pageSize) : 1;
   const startIdx = total > 0 ? (page - 1) * pageSize + 1 : 0;

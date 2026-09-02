@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Download, RefreshCw, AlertCircle, CheckCircle2 } from "lucide-react";
-import { runReconciliation, getTransactions, getExceptions } from "../services/api";
+import {
+  Download,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
+
+import {
+  runReconciliation,
+  getTransactions,
+  getExceptions,
+} from "../services/api";
+
 import MetricsCards from "../components/dashboard/MetricsCards";
 import ReconciliationChart from "../components/dashboard/ReconciliationChart";
 import ExceptionBreakdown from "../components/dashboard/ExceptionBreakdown";
@@ -9,50 +20,70 @@ import RecentActivity from "../components/dashboard/RecentActivity";
 const RECENT_ACTIVITY_LIMIT = 5;
 
 function getFormattedDate() {
-  const options = { weekday: "long", day: "numeric", month: "long", year: "numeric" };
+  const options = {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+
   return new Date().toLocaleDateString("en-US", options);
 }
 
-function Dashboard({ onNavigate = () => {} }) {
+function Dashboard({
+  onNavigate = () => {},
+  dataDir = "data",
+  datasetVersion = 0,
+}) {
   const [metrics, setMetrics] = useState({});
   const [transactions, setTransactions] = useState([]);
   const [rawExceptions, setRawExceptions] = useState({});
-
   const [isLoading, setIsLoading] = useState(true);
   const [isRunningPipeline, setIsRunningPipeline] = useState(false);
-  const [feedback, setFeedback] = useState(null); // { type: "success" | "error", message: string }
+  const [feedback, setFeedback] = useState(null);
 
   const loadDashboardData = useCallback(async () => {
-    // 1. Run pipeline reconciliation via existing POST /api/reconcile endpoint
-    const reconcileResponse = await runReconciliation();
+    const reconcileResponse = await runReconciliation({
+      data_dir: dataDir,
+    });
+
     setMetrics(reconcileResponse?.metrics || {});
 
-    // 2. Fetch downstream transactions and exceptions in parallel
     const [transactionsResponse, exceptionsResponse] = await Promise.all([
-      getTransactions({ page: 1, page_size: 10 }),
-      getExceptions(),
+      getTransactions({
+        page: 1,
+        page_size: 10,
+        data_dir: dataDir,
+      }),
+      getExceptions({
+        data_dir: dataDir,
+      }),
     ]);
 
     setTransactions(transactionsResponse?.items || []);
     setRawExceptions(exceptionsResponse || {});
+
     return reconcileResponse;
-  }, []);
+  }, [dataDir]);
 
   useEffect(() => {
     (async () => {
       setIsLoading(true);
+
       try {
         await loadDashboardData();
       } catch (err) {
         setFeedback({
           type: "error",
-          message: err.message || "Failed to load reconciliation dashboard data",
+          message:
+            err.message ||
+            "Failed to load reconciliation dashboard data",
         });
       } finally {
         setIsLoading(false);
       }
     })();
-  }, [loadDashboardData]);
+  }, [loadDashboardData, datasetVersion]);
 
   const handleRunPipeline = useCallback(async () => {
     if (isRunningPipeline) return;
@@ -62,8 +93,13 @@ function Dashboard({ onNavigate = () => {} }) {
 
     try {
       const reconcileResponse = await loadDashboardData();
-      const reconciledCount = reconcileResponse?.metrics?.reconciled_orders;
-      const totalCount = reconcileResponse?.metrics?.total_orders;
+
+      const reconciledCount =
+        reconcileResponse?.metrics?.reconciled_orders;
+
+      const totalCount =
+        reconcileResponse?.metrics?.total_orders;
+
       const successMsg =
         reconciledCount !== undefined && totalCount !== undefined
           ? `Pipeline completed successfully • ${reconciledCount} of ${totalCount} orders reconciled`
@@ -74,24 +110,43 @@ function Dashboard({ onNavigate = () => {} }) {
         message: successMsg,
       });
 
-      // Auto-clear success message after 5 seconds
       setTimeout(() => {
-        setFeedback((prev) => (prev?.type === "success" ? null : prev));
+        setFeedback((prev) =>
+          prev?.type === "success" ? null : prev
+        );
       }, 5000);
     } catch (err) {
       setFeedback({
         type: "error",
-        message: err.message || "Pipeline execution failed. Please check network/backend status.",
+        message:
+          err.message ||
+          "Pipeline execution failed. Please check network/backend status.",
       });
     } finally {
       setIsRunningPipeline(false);
     }
   }, [isRunningPipeline, loadDashboardData]);
 
+  const datasetLabel =
+    dataDir === "data" ? "Default demo dataset" : "Active dataset";
+
   if (isLoading) {
     return (
-      <div className="dashboard-page" style={{ padding: "48px 0", textAlign: "center" }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", color: "#5A6A85" }}>
+      <div
+        className="dashboard-page"
+        style={{
+          padding: "48px 0",
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "10px",
+            color: "#5A6A85",
+          }}
+        >
           <RefreshCw size={18} className="spinning" />
           <span>Loading reconciliation intelligence...</span>
         </div>
@@ -101,13 +156,22 @@ function Dashboard({ onNavigate = () => {} }) {
 
   return (
     <div className="dashboard-page">
-      {/* Error / Failure Banner */}
-      {feedback && feedback.type === "error" && (
-        <div className="alert-banner alert-banner-error" role="alert">
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      {feedback?.type === "error" && (
+        <div
+          className="alert-banner alert-banner-error"
+          role="alert"
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             <AlertCircle size={16} />
             <span>{feedback.message}</span>
           </div>
+
           <button
             type="button"
             className="alert-banner-btn"
@@ -119,23 +183,39 @@ function Dashboard({ onNavigate = () => {} }) {
         </div>
       )}
 
-      {/* Success Notification Banner */}
-      {feedback && feedback.type === "success" && (
-        <div className="alert-banner alert-banner-success" role="status">
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      {feedback?.type === "success" && (
+        <div
+          className="alert-banner alert-banner-success"
+          role="status"
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
             <CheckCircle2 size={16} />
             <span>{feedback.message}</span>
           </div>
         </div>
       )}
 
-      {/* Unified Page Header */}
       <div className="page-header">
         <div>
-          <div className="page-header-pre">{getFormattedDate()}</div>
-          <h1 className="page-header-title">Good morning, Alex</h1>
+          <div className="page-header-pre">
+            {getFormattedDate()}
+          </div>
+
+          <h1 className="page-header-title">
+            Good morning, Alex
+          </h1>
+
           <p className="page-header-desc">
             Here's the latest operational view of your reconciliation cycle.
+            <span className="dataset-badge">
+              {datasetLabel}
+            </span>
           </p>
         </div>
 
@@ -152,7 +232,12 @@ function Dashboard({ onNavigate = () => {} }) {
               size={14}
               className={isRunningPipeline ? "spinning" : ""}
             />
-            <span>{isRunningPipeline ? "Running..." : "Re-run Pipeline"}</span>
+
+            <span>
+              {isRunningPipeline
+                ? "Running..."
+                : "Re-run Pipeline"}
+            </span>
           </button>
 
           <button
@@ -167,19 +252,17 @@ function Dashboard({ onNavigate = () => {} }) {
         </div>
       </div>
 
-      {/* Row 1: KPI Summary Metrics Cards */}
       <MetricsCards metrics={metrics} />
 
-      {/* Row 2: Analytics Grid (Health Donut + Exception Breakdown) */}
       <div className="dashboard-analytics-grid">
         <ReconciliationChart metrics={metrics} />
+
         <ExceptionBreakdown
           exceptionsData={rawExceptions}
           onNavigate={onNavigate}
         />
       </div>
 
-      {/* Row 3: Recent Activity Table */}
       <RecentActivity
         transactions={transactions}
         limit={RECENT_ACTIVITY_LIMIT}

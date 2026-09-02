@@ -35,7 +35,7 @@ function formatDate(val) {
   }
 }
 
-function Exceptions() {
+function Exceptions({ dataDir = "data", datasetVersion = 0 }) {
   const [exceptionsData, setExceptionsData] = useState({
     duplicate_bank_rows: [],
     drift_batches: [],
@@ -59,7 +59,7 @@ function Exceptions() {
     setError(null);
 
     try {
-      const response = await getExceptions();
+      const response = await getExceptions({ data_dir: dataDir });
       setExceptionsData({
         duplicate_bank_rows: response?.duplicate_bank_rows || [],
         drift_batches: response?.drift_batches || [],
@@ -71,11 +71,11 @@ function Exceptions() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [dataDir]);
 
   useEffect(() => {
     loadExceptions();
-  }, [loadExceptions]);
+  }, [loadExceptions, datasetVersion]);
 
   const toggleSection = (sectionKey) => {
     setExpandedSections((prev) => ({

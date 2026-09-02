@@ -19,11 +19,13 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      error.message ||
-      "Unexpected API error";
+    const detail = error.response?.data?.detail;
+    let message = error.response?.data?.message || error.message || "Unexpected API error";
+    if (typeof detail === "string") {
+      message = detail;
+    } else if (Array.isArray(detail) && detail.length > 0) {
+      message = detail.map((item) => item.msg || JSON.stringify(item)).join("; ");
+    }
     return Promise.reject(new Error(message));
   }
 );
@@ -65,6 +67,22 @@ export async function getExceptions(params = {}) {
  */
 export async function explainException(payload) {
   const { data } = await apiClient.post("/api/exceptions/explain", payload);
+  return data;
+}
+
+/**
+ * Upload the three reconciliation CSV files and replace the active dataset.
+ * @param {{ bankStatement: File, razorpaySettlement: File, internalLedger: File }} files
+ */
+export async function uploadDataset({ bankStatement, razorpaySettlement, internalLedger }) {
+  const formData = new FormData();
+  formData.append("bank_statement", bankStatement);
+  formData.append("razorpay_settlement", razorpaySettlement);
+  formData.append("internal_ledger", internalLedger);
+
+  const { data } = await apiClient.post("/api/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return data;
 }
 
