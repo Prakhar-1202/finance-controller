@@ -239,10 +239,30 @@ input, select {
   color: var(--color-rose-critical);
 }
 
+.alert-banner-success {
+  background: var(--color-emerald-soft);
+  border: 1px solid rgba(20, 155, 117, 0.25);
+  color: var(--color-emerald-healthy);
+}
+
 .alert-banner-btn {
   font-weight: 600;
   text-decoration: underline;
   color: inherit;
+}
+
+/* Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  animation: spin 0.8s linear infinite;
 }
 
 /* ==========================================================================

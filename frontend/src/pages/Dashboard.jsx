@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Download, RefreshCw, AlertCircle } from "lucide-react";
+import { Download, RefreshCw, AlertCircle, CheckCircle2 } from "lucide-react";
 import { runReconciliation, getTransactions, getExceptions } from "../services/api";
 import MetricsCards from "../components/dashboard/MetricsCards";
 import ReconciliationChart from "../components/dashboard/ReconciliationChart";
@@ -19,47 +19,80 @@ function Dashboard({ onNavigate = () => {} }) {
   const [rawExceptions, setRawExceptions] = useState({});
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [error, setError] = useState(null);
+  const [isRunningPipeline, setIsRunningPipeline] = useState(false);
+  const [feedback, setFeedback] = useState(null); // { type: "success" | "error", message: string }
 
   const loadDashboardData = useCallback(async () => {
-    setError(null);
+    // 1. Run pipeline reconciliation via existing POST /api/reconcile endpoint
+    const reconcileResponse = await runReconciliation();
+    setMetrics(reconcileResponse?.metrics || {});
 
-    try {
-      const reconcileResponse = await runReconciliation();
-      setMetrics(reconcileResponse?.metrics || {});
+    // 2. Fetch downstream transactions and exceptions in parallel
+    const [transactionsResponse, exceptionsResponse] = await Promise.all([
+      getTransactions({ page: 1, page_size: 10 }),
+      getExceptions(),
+    ]);
 
-      const [transactionsResponse, exceptionsResponse] = await Promise.all([
-        getTransactions({ page: 1, page_size: 10 }),
-        getExceptions(),
-      ]);
-
-      setTransactions(transactionsResponse?.items || []);
-      setRawExceptions(exceptionsResponse || {});
-    } catch (err) {
-      setError(err.message || "Failed to load reconciliation dashboard data");
-    }
+    setTransactions(transactionsResponse?.items || []);
+    setRawExceptions(exceptionsResponse || {});
+    return reconcileResponse;
   }, []);
 
   useEffect(() => {
     (async () => {
       setIsLoading(true);
-      await loadDashboardData();
-      setIsLoading(false);
+      try {
+        await loadDashboardData();
+      } catch (err) {
+        setFeedback({
+          type: "error",
+          message: err.message || "Failed to load reconciliation dashboard data",
+        });
+      } finally {
+        setIsLoading(false);
+      }
     })();
   }, [loadDashboardData]);
 
-  const handleRefresh = useCallback(async () => {
-    setIsRefreshing(true);
-    await loadDashboardData();
-    setIsRefreshing(false);
-  }, [loadDashboardData]);
+  const handleRunPipeline = useCallback(async () => {
+    if (isRunningPipeline) return;
+
+    setIsRunningPipeline(true);
+    setFeedback(null);
+
+    try {
+      const reconcileResponse = await loadDashboardData();
+      const reconciledCount = reconcileResponse?.metrics?.reconciled_orders;
+      const totalCount = reconcileResponse?.metrics?.total_orders;
+      const successMsg =
+        reconciledCount !== undefined && totalCount !== undefined
+          ? `Pipeline completed successfully • ${reconciledCount} of ${totalCount} orders reconciled`
+          : "Pipeline completed successfully • Dashboard metrics updated";
+
+      setFeedback({
+        type: "success",
+        message: successMsg,
+      });
+
+      // Auto-clear success message after 5 seconds
+      setTimeout(() => {
+        setFeedback((prev) => (prev?.type === "success" ? null : prev));
+      }, 5000);
+    } catch (err) {
+      setFeedback({
+        type: "error",
+        message: err.message || "Pipeline execution failed. Please check network/backend status.",
+      });
+    } finally {
+      setIsRunningPipeline(false);
+    }
+  }, [isRunningPipeline, loadDashboardData]);
 
   if (isLoading) {
     return (
       <div className="dashboard-page" style={{ padding: "48px 0", textAlign: "center" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", color: "#5A6A85" }}>
-          <RefreshCw size={18} className="spinning" style={{ animation: "spin 0.8s linear infinite" }} />
+          <RefreshCw size={18} className="spinning" />
           <span>Loading reconciliation intelligence...</span>
         </div>
       </div>
@@ -68,21 +101,31 @@ function Dashboard({ onNavigate = () => {} }) {
 
   return (
     <div className="dashboard-page">
-      {/* Error Alert */}
-      {error && (
+      {/* Error / Failure Banner */}
+      {feedback && feedback.type === "error" && (
         <div className="alert-banner alert-banner-error" role="alert">
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <AlertCircle size={16} />
-            <span>{error}</span>
+            <span>{feedback.message}</span>
           </div>
           <button
             type="button"
             className="alert-banner-btn"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
+            onClick={handleRunPipeline}
+            disabled={isRunningPipeline}
           >
             Retry
           </button>
+        </div>
+      )}
+
+      {/* Success Notification Banner */}
+      {feedback && feedback.type === "success" && (
+        <div className="alert-banner alert-banner-success" role="status">
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <CheckCircle2 size={16} />
+            <span>{feedback.message}</span>
+          </div>
         </div>
       )}
 
@@ -100,17 +143,23 @@ function Dashboard({ onNavigate = () => {} }) {
           <button
             type="button"
             className="btn-primary"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
+            onClick={handleRunPipeline}
+            disabled={isRunningPipeline}
+            aria-busy={isRunningPipeline}
+            title="Trigger full reconciliation pipeline"
           >
-            <RefreshCw size={14} className={isRefreshing ? "spinning" : ""} />
-            <span>{isRefreshing ? "Refreshing..." : "Re-run Pipeline"}</span>
+            <RefreshCw
+              size={14}
+              className={isRunningPipeline ? "spinning" : ""}
+            />
+            <span>{isRunningPipeline ? "Running..." : "Re-run Pipeline"}</span>
           </button>
 
           <button
             type="button"
             className="btn-secondary"
             onClick={() => window.print()}
+            title="Export reconciliation report"
           >
             <Download size={14} />
             <span>Export Report</span>
