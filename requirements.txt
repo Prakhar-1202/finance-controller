@@ -5,3 +5,4 @@ rapidfuzz
 fastapi
 uvicorn
 pytest
+python-multipart
