@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+
 import {
   Download,
   RefreshCw,
@@ -16,6 +17,7 @@ import MetricsCards from "../components/dashboard/MetricsCards";
 import ReconciliationChart from "../components/dashboard/ReconciliationChart";
 import ExceptionBreakdown from "../components/dashboard/ExceptionBreakdown";
 import RecentActivity from "../components/dashboard/RecentActivity";
+import UploadDataset from "../components/dashboard/UploadDataset";
 
 const RECENT_ACTIVITY_LIMIT = 5;
 
@@ -32,6 +34,7 @@ function getFormattedDate() {
 
 function Dashboard({
   onNavigate = () => {},
+  onDatasetUploaded = () => {},
   dataDir = "data",
   datasetVersion = 0,
 }) {
@@ -251,6 +254,8 @@ function Dashboard({
           </button>
         </div>
       </div>
+
+      <UploadDataset onUploaded={onDatasetUploaded} />
 
       <MetricsCards metrics={metrics} />
 

@@ -15,6 +15,7 @@ Endpoints:
     GET  /api/transactions         — paginated transaction list with status labels
     GET  /api/exceptions           — exceptions broken down by tier/type
     POST /api/exceptions/explain   — LLM-powered exception explanation
+    POST /api/upload               — upload a new reconciliation dataset
 """
 
 from __future__ import annotations
@@ -23,7 +24,7 @@ import math
 from functools import lru_cache
 from typing import Any, Optional
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -34,6 +35,10 @@ from backend.metrics import (
     exception_counts as _exception_counts,
 )
 from backend.matcher.llm_reasoner import ExceptionContext, explain_exception
+from backend.upload_handler import (
+    UploadValidationError,
+    save_uploaded_dataset,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -57,12 +62,6 @@ app.add_middleware(
 
 # ---------------------------------------------------------------------------
 # Pipeline result cache
-#
-# run_pipeline() reads CSVs and runs all four tiers — roughly 1–2 seconds on
-# this dataset. An in-process cache keyed on data_dir avoids re-running it
-# for every UI poll. The cache is intentionally unbounded for now (the set of
-# data directories is small and fixed); a TTL-aware cache would be the right
-# next step once a data-refresh mechanism exists.
 # ---------------------------------------------------------------------------
 
 @lru_cache(maxsize=8)
@@ -78,6 +77,7 @@ def _safe_float(v: Any) -> Optional[float]:
     """Return None for NaN/Inf so JSON serialisation never emits a bare NaN."""
     if v is None:
         return None
+
     try:
         f = float(v)
         return None if (math.isnan(f) or math.isinf(f)) else f
@@ -88,6 +88,7 @@ def _safe_float(v: Any) -> Optional[float]:
 def _safe_str(v: Any) -> Optional[str]:
     if v is None or (isinstance(v, float) and math.isnan(v)):
         return None
+
     s = str(v)
     return None if s in ("NaT", "nan", "None") else s
 
@@ -97,13 +98,15 @@ def _safe_str(v: Any) -> Optional[str]:
 # ---------------------------------------------------------------------------
 
 class ReconcileRequest(BaseModel):
-    data_dir: str = Field("data", description="Path to the directory containing the CSV files.")
+    data_dir: str = Field(
+        "data",
+        description="Path to the directory containing the CSV files.",
+    )
 
 
 class ExplainRequest(BaseModel):
-    """Maps directly to llm_reasoner.ExceptionContext. All fields except
-    detected_category are optional because the caller may only know a subset
-    of the exception's numeric context."""
+    """Maps directly to llm_reasoner.ExceptionContext."""
+
     detected_category: str
     order_id: Optional[str] = None
     bank_ref: Optional[str] = None
@@ -150,38 +153,26 @@ class TransactionItem(BaseModel):
     Fields that are not available for a given reconciliation status are
     explicitly None rather than omitted so the frontend always receives a
     consistent schema.
-
-    Availability by status:
-        reconciled / tier3_recovered:
-            all fields present from ls_result.matched
-        orphan_ledger:
-            order_id, invoice_id, customer, invoice_amount, status, created_at
-            net_amount=None, utr=None, settlement_id=None
-        orphan_settlement:
-            order_id, settlement_id, net_amount, utr
-            invoice_id=None, customer=None, invoice_amount=None
-        exception (Tier 3 order-level):
-            order_id, bank_ref (as utr), category, reason
-            most amount/customer fields=None
     """
-    order_id: str
-    reconciliation_status: str          # reconciled | tier3_recovered | orphan_ledger
-                                        # | orphan_settlement | exception
-    tier: Optional[str] = None          # "Tier 1 Exact" | "Tier 3 Recovered" | None
 
-    # Ledger fields (available for matched + orphan_ledger)
+    order_id: str
+
+    reconciliation_status: str
+    tier: Optional[str] = None
+
+    # Ledger fields
     invoice_id: Optional[str] = None
     customer: Optional[str] = None
     invoice_amount: Optional[float] = None
-    ledger_status: Optional[str] = None  # "open" / "closed" from ledger.status
+    ledger_status: Optional[str] = None
     created_at: Optional[str] = None
 
-    # Settlement fields (available for matched + orphan_settlement)
+    # Settlement fields
     settlement_id: Optional[str] = None
     net_amount: Optional[float] = None
     utr: Optional[str] = None
 
-    # Exception fields (available for Tier 3 exceptions)
+    # Exception fields
     category: Optional[str] = None
     reason: Optional[str] = None
 
@@ -247,14 +238,24 @@ class ReasoningResponse(BaseModel):
     confidence: str
 
 
+class UploadResponse(BaseModel):
+    data_dir: str
+    message: str
+
+
 # ---------------------------------------------------------------------------
 # Endpoint: POST /api/reconcile
 # ---------------------------------------------------------------------------
 
-@app.post("/api/reconcile", response_model=ReconcileResponse, tags=["reconciliation"])
-def reconcile(body: ReconcileRequest = ReconcileRequest()) -> ReconcileResponse:
-    """Run the full reconciliation pipeline (Tiers 1–3) and return operational
-    metrics. Ground truth is never loaded; this is a pure production endpoint."""
+@app.post(
+    "/api/reconcile",
+    response_model=ReconcileResponse,
+    tags=["reconciliation"],
+)
+def reconcile(
+    body: ReconcileRequest = ReconcileRequest(),
+) -> ReconcileResponse:
+    """Run the full reconciliation pipeline and return operational metrics."""
     result = _cached_pipeline(body.data_dir)
 
     m = _reconciliation_rate(result)
@@ -285,100 +286,125 @@ def reconcile(body: ReconcileRequest = ReconcileRequest()) -> ReconcileResponse:
 # Endpoint: GET /api/transactions
 # ---------------------------------------------------------------------------
 
-@app.get("/api/transactions", response_model=PaginatedTransactionsResponse, tags=["transactions"])
+@app.get(
+    "/api/transactions",
+    response_model=PaginatedTransactionsResponse,
+    tags=["transactions"],
+)
 def get_transactions(
-    status: str = Query("all", description="all | reconciled | orphan_ledger | orphan_settlement | exception"),
+    status: str = Query(
+        "all",
+        description="all | reconciled | orphan_ledger | orphan_settlement | exception",
+    ),
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=500),
     data_dir: str = Query("data"),
 ) -> PaginatedTransactionsResponse:
-    """Return a paginated list of orders annotated with their reconciliation status.
 
-    Fields not available for a given status are set to None; the schema is
-    always the same shape so the frontend can render a single table."""
     result = _cached_pipeline(data_dir)
 
     tier1_ids = result.reconciled_order_ids()
     cat_result = result.cat_result
-    all_reconciled = total_reconciled_order_ids(result, cat_result) if cat_result else tier1_ids
+
+    all_reconciled = (
+        total_reconciled_order_ids(result, cat_result)
+        if cat_result
+        else tier1_ids
+    )
+
     tier3_ids = all_reconciled - tier1_ids
 
     items: list[TransactionItem] = []
 
-    # --- Reconciled (Tier 1 exact + Tier 3 recovered) ---
+    # --- Reconciled ---
     if status in ("all", "reconciled"):
         matched = result.ls_result.matched
+
         for _, row in matched.iterrows():
             oid = row["order_id"]
+
             if oid not in all_reconciled:
                 continue
-            tier = "Tier 1 Exact" if oid in tier1_ids else "Tier 3 Recovered"
-            recon_status = "reconciled" if oid in tier1_ids else "tier3_recovered"
-            items.append(TransactionItem(
-                order_id=oid,
-                reconciliation_status=recon_status,
-                tier=tier,
-                invoice_id=_safe_str(row.get("invoice_id")),
-                customer=_safe_str(row.get("customer")),
-                invoice_amount=_safe_float(row.get("invoice_amount")),
-                ledger_status=_safe_str(row.get("status")),
-                created_at=_safe_str(row.get("created_at")),
-                settlement_id=_safe_str(row.get("settlement_id")),
-                net_amount=_safe_float(row.get("net_amount")),
-                utr=_safe_str(row.get("utr")),
-            ))
 
-    # --- Orphan Ledger (invoiced, never paid) ---
+            tier = "Tier 1 Exact" if oid in tier1_ids else "Tier 3 Recovered"
+            recon_status = (
+                "reconciled"
+                if oid in tier1_ids
+                else "tier3_recovered"
+            )
+
+            items.append(
+                TransactionItem(
+                    order_id=oid,
+                    reconciliation_status=recon_status,
+                    tier=tier,
+                    invoice_id=_safe_str(row.get("invoice_id")),
+                    customer=_safe_str(row.get("customer")),
+                    invoice_amount=_safe_float(row.get("invoice_amount")),
+                    ledger_status=_safe_str(row.get("status")),
+                    created_at=_safe_str(row.get("created_at")),
+                    settlement_id=_safe_str(row.get("settlement_id")),
+                    net_amount=_safe_float(row.get("net_amount")),
+                    utr=_safe_str(row.get("utr")),
+                )
+            )
+
+    # --- Orphan Ledger ---
     if status in ("all", "orphan_ledger"):
         for _, row in result.ls_result.orphan_ledger.iterrows():
-            items.append(TransactionItem(
-                order_id=str(row["order_id"]),
-                reconciliation_status="orphan_ledger",
-                tier=None,
-                invoice_id=_safe_str(row.get("invoice_id")),
-                customer=_safe_str(row.get("customer")),
-                invoice_amount=_safe_float(row.get("invoice_amount")),
-                ledger_status=_safe_str(row.get("status")),
-                created_at=_safe_str(row.get("created_at")),
-                # net_amount, utr, settlement_id are unavailable for orphan_ledger
-                net_amount=None,
-                utr=None,
-                settlement_id=None,
-            ))
+            items.append(
+                TransactionItem(
+                    order_id=str(row["order_id"]),
+                    reconciliation_status="orphan_ledger",
+                    tier=None,
+                    invoice_id=_safe_str(row.get("invoice_id")),
+                    customer=_safe_str(row.get("customer")),
+                    invoice_amount=_safe_float(row.get("invoice_amount")),
+                    ledger_status=_safe_str(row.get("status")),
+                    created_at=_safe_str(row.get("created_at")),
+                    net_amount=None,
+                    utr=None,
+                    settlement_id=None,
+                )
+            )
 
-    # --- Orphan Settlement (paid, never invoiced) ---
+    # --- Orphan Settlement ---
     if status in ("all", "orphan_settlement"):
         for _, row in result.ls_result.orphan_settlement.iterrows():
-            items.append(TransactionItem(
-                order_id=str(row["order_id"]),
-                reconciliation_status="orphan_settlement",
-                tier=None,
-                # invoice_id, customer, invoice_amount are unavailable for orphan_settlement
-                invoice_id=None,
-                customer=None,
-                invoice_amount=None,
-                ledger_status=None,
-                created_at=None,
-                settlement_id=_safe_str(row.get("settlement_id")),
-                net_amount=_safe_float(row.get("net_amount")),
-                utr=_safe_str(row.get("utr")),
-            ))
+            items.append(
+                TransactionItem(
+                    order_id=str(row["order_id"]),
+                    reconciliation_status="orphan_settlement",
+                    tier=None,
+                    invoice_id=None,
+                    customer=None,
+                    invoice_amount=None,
+                    ledger_status=None,
+                    created_at=None,
+                    settlement_id=_safe_str(row.get("settlement_id")),
+                    net_amount=_safe_float(row.get("net_amount")),
+                    utr=_safe_str(row.get("utr")),
+                )
+            )
 
     # --- Tier 3 Order Exceptions ---
     if status in ("all", "exception") and cat_result is not None:
         for _, row in cat_result.order_exceptions.iterrows():
-            items.append(TransactionItem(
-                order_id=str(row["order_id"]),
-                reconciliation_status="exception",
-                tier="Tier 3 Exception",
-                utr=_safe_str(row.get("bank_ref")),
-                category=_safe_str(row.get("category")),
-                reason=_safe_str(row.get("reason")),
-            ))
+            items.append(
+                TransactionItem(
+                    order_id=str(row["order_id"]),
+                    reconciliation_status="exception",
+                    tier="Tier 3 Exception",
+                    utr=_safe_str(row.get("bank_ref")),
+                    category=_safe_str(row.get("category")),
+                    reason=_safe_str(row.get("reason")),
+                )
+            )
 
     total = len(items)
     start = (page - 1) * page_size
     end = start + page_size
+
     return PaginatedTransactionsResponse(
         total=total,
         page=page,
@@ -391,72 +417,91 @@ def get_transactions(
 # Endpoint: GET /api/exceptions
 # ---------------------------------------------------------------------------
 
-@app.get("/api/exceptions", response_model=ExceptionsResponse, tags=["exceptions"])
+@app.get(
+    "/api/exceptions",
+    response_model=ExceptionsResponse,
+    tags=["exceptions"],
+)
 def get_exceptions(
     data_dir: str = Query("data"),
 ) -> ExceptionsResponse:
-    """Return a structured breakdown of all exceptions across tiers.
 
-    - duplicate_bank_rows: Tier 2 bank rows flagged as likely duplicate postings.
-    - drift_batches:       Tier 2 batch-level drift classification (batch granularity,
-                           NOT expanded to individual orders).
-    - tier3_order_exceptions: Tier 3 individual orders that could not be recovered.
-    - tier3_batch_report:  Tier 3 per-batch resolution summary.
-    """
     result = _cached_pipeline(data_dir)
 
     # Duplicate bank rows
     dup_rows: list[DuplicateBankRow] = []
+
     for _, row in result.duplicates.iterrows():
-        dup_rows.append(DuplicateBankRow(
-            bank_row_id=int(row["bank_row_id"]),
-            bank_ref=str(row["bank_ref"]),
-            amount=float(row["amount"]),
-            txn_date=_safe_str(row.get("txn_date")),
-            narration=_safe_str(row.get("narration")),
-            presumed_original_bank_row_id=int(row["presumed_original_bank_row_id"]),
-            confidence=str(row["confidence"]),
-        ))
+        dup_rows.append(
+            DuplicateBankRow(
+                bank_row_id=int(row["bank_row_id"]),
+                bank_ref=str(row["bank_ref"]),
+                amount=float(row["amount"]),
+                txn_date=_safe_str(row.get("txn_date")),
+                narration=_safe_str(row.get("narration")),
+                presumed_original_bank_row_id=int(
+                    row["presumed_original_bank_row_id"]
+                ),
+                confidence=str(row["confidence"]),
+            )
+        )
 
-    # Drift-classified batches (batch-level, not expanded to orders)
+    # Drift batches
     drift_batches: list[DriftBatch] = []
-    for _, row in result.drift_classified.iterrows():
-        drift_batches.append(DriftBatch(
-            bank_ref=str(row["bank_ref"]),
-            bank_row_id=int(row["bank_row_id"]) if row.get("bank_row_id") is not None else None,
-            settled_sum=_safe_float(row.get("settled_sum")),
-            amount=_safe_float(row.get("amount")),
-            diff=_safe_float(row.get("diff")),
-            bank_ref_count=int(row["bank_ref_count"]) if row.get("bank_ref_count") is not None else None,
-            category=str(row["category"]),
-            confidence=str(row["confidence"]),
-            txn_date=_safe_str(row.get("txn_date")),
-            narration=_safe_str(row.get("narration")),
-        ))
 
-    # Tier 3 order exceptions
+    for _, row in result.drift_classified.iterrows():
+        drift_batches.append(
+            DriftBatch(
+                bank_ref=str(row["bank_ref"]),
+                bank_row_id=(
+                    int(row["bank_row_id"])
+                    if row.get("bank_row_id") is not None
+                    else None
+                ),
+                settled_sum=_safe_float(row.get("settled_sum")),
+                amount=_safe_float(row.get("amount")),
+                diff=_safe_float(row.get("diff")),
+                bank_ref_count=(
+                    int(row["bank_ref_count"])
+                    if row.get("bank_ref_count") is not None
+                    else None
+                ),
+                category=str(row["category"]),
+                confidence=str(row["confidence"]),
+                txn_date=_safe_str(row.get("txn_date")),
+                narration=_safe_str(row.get("narration")),
+            )
+        )
+
+    # Tier 3 exceptions
     order_exceptions: list[OrderException] = []
     batch_report: list[BatchReportItem] = []
 
     cat_result = result.cat_result
+
     if cat_result is not None:
+
         for _, row in cat_result.order_exceptions.iterrows():
-            order_exceptions.append(OrderException(
-                order_id=str(row["order_id"]),
-                bank_ref=_safe_str(row.get("bank_ref")),
-                category=str(row["category"]),
-                reason=str(row["reason"]),
-            ))
+            order_exceptions.append(
+                OrderException(
+                    order_id=str(row["order_id"]),
+                    bank_ref=_safe_str(row.get("bank_ref")),
+                    category=str(row["category"]),
+                    reason=str(row["reason"]),
+                )
+            )
 
         for _, row in cat_result.batch_report.iterrows():
-            batch_report.append(BatchReportItem(
-                bank_ref=str(row["bank_ref"]),
-                category=str(row["category"]),
-                n_orders=int(row["n_orders"]),
-                n_resolved=int(row["n_resolved"]),
-                n_excluded=int(row["n_excluded"]),
-                diff=_safe_float(row.get("diff")),
-            ))
+            batch_report.append(
+                BatchReportItem(
+                    bank_ref=str(row["bank_ref"]),
+                    category=str(row["category"]),
+                    n_orders=int(row["n_orders"]),
+                    n_resolved=int(row["n_resolved"]),
+                    n_excluded=int(row["n_excluded"]),
+                    diff=_safe_float(row.get("diff")),
+                )
+            )
 
     return ExceptionsResponse(
         duplicate_bank_rows=dup_rows,
@@ -470,10 +515,15 @@ def get_exceptions(
 # Endpoint: POST /api/exceptions/explain
 # ---------------------------------------------------------------------------
 
-@app.post("/api/exceptions/explain", response_model=ReasoningResponse, tags=["exceptions"])
-def explain_exception_endpoint(body: ExplainRequest) -> ReasoningResponse:
-    """Call the LLM reasoner (or its deterministic fallback) to explain a
-    pre-detected exception. The reconciliation outcome is never changed here."""
+@app.post(
+    "/api/exceptions/explain",
+    response_model=ReasoningResponse,
+    tags=["exceptions"],
+)
+def explain_exception_endpoint(
+    body: ExplainRequest,
+) -> ReasoningResponse:
+
     context = ExceptionContext(
         detected_category=body.detected_category,
         order_id=body.order_id,
@@ -486,11 +536,48 @@ def explain_exception_endpoint(body: ExplainRequest) -> ReasoningResponse:
         narration=body.narration,
         notes=body.notes,
     )
+
     reasoning = explain_exception(context)
+
     return ReasoningResponse(
         category=reasoning.category,
         explanation=reasoning.explanation,
         likely_cause=reasoning.likely_cause,
         suggested_action=reasoning.suggested_action,
         confidence=reasoning.confidence,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Endpoint: POST /api/upload
+# ---------------------------------------------------------------------------
+
+@app.post(
+    "/api/upload",
+    response_model=UploadResponse,
+    tags=["dataset"],
+)
+async def upload_dataset(
+    bank_statement: UploadFile = File(...),
+    razorpay_settlement: UploadFile = File(...),
+    internal_ledger: UploadFile = File(...),
+) -> UploadResponse:
+    """Validate and persist a new reconciliation dataset."""
+
+    try:
+        data_dir = save_uploaded_dataset(
+            bank_statement=await bank_statement.read(),
+            razorpay_settlement=await razorpay_settlement.read(),
+            internal_ledger=await internal_ledger.read(),
+        )
+
+    except UploadValidationError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc),
+        )
+
+    return UploadResponse(
+        data_dir=data_dir,
+        message="Dataset uploaded successfully.",
     )

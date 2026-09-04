@@ -10,3 +10,4 @@ venv/
 .env
 .cursor/
 .DS_Store
+data/uploads/
